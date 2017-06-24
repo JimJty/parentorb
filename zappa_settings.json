@@ -1,0 +1,42 @@
+{
+  "prod": {
+    "aws_region": "us-east-1",
+    "django_settings": "parentorb.settings_prod",
+    "profile_name": "handyfunapps",
+    "s3_bucket": "zappa-parentorb",
+    "exclude": [
+      "client"
+    ],
+    "certificate_arn": "arn:aws:acm:us-east-1:763914776679:certificate/16e61316-019d-4313-890b-47d459870de3",
+    "domain": "parentorb.com",
+    "vpc_config": {
+      "SubnetIds": [
+        "subnet-be7005f6","subnet-00d6625a","subnet-314d5854","subnet-148d3138","subnet-04c1f038"
+      ],
+      "SecurityGroupIds": [
+        "sg-267daf57"
+      ]
+    }
+  },
+  "devbot": {
+    "aws_region": "us-east-1",
+    "profile_name": "handyfunapps",
+    "lambda_handler": "bot_app.handler",
+    "s3_bucket": "zappa-parentorb",
+    "exclude": [
+      "client"
+    ],
+    "apigateway_enabled": false,
+    "callbacks": {
+      "post": "zappa_callbacks.set_lex_permission_dev"
+    },
+    "vpc_config": {
+      "SubnetIds": [
+        "subnet-7a9c3447"
+      ],
+      "SecurityGroupIds": [
+        "sg-267daf57"
+      ]
+    }
+  }
+}

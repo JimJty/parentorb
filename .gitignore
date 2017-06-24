@@ -1,0 +1,6 @@
+.idea
+*.py[cod]
+settings_local*
+settings_prod*
+.env
+.DS_Store
