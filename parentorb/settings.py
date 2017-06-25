@@ -95,6 +95,8 @@ MAILGUN_ACCESS_KEY = 'DEV'
 MAILGUN_SERVER_NAME = 'parentorb.com'
 SERVER_EMAIL = 'support@parentorb.com'
 
+FB_MESSENGER_TOKEN = 'DEV'
+
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
 

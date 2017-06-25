@@ -1,0 +1,18 @@
+{
+    "currentIntent": {
+        "slots": {},
+        "name": "GetStarted",
+        "confirmationStatus": "None"
+    },
+    "bot": {
+        "alias": null,
+        "version": "$LATEST",
+        "name": "ParentOrb"
+    },
+    "userId": "z6fjixjoafpsk8lo2ysa0a7vn3u2irin",
+    "inputTranscript": "get started",
+    "invocationSource": "FulfillmentCodeHook",
+    "outputDialogMode": "Text",
+    "messageVersion": "1.0",
+    "sessionAttributes": null
+}
