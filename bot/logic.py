@@ -30,7 +30,7 @@ def handle_get_started(event):
         "fulfillmentState": "Fulfilled",
         "message": {
             "contentType": "PlainText",
-            "content": "ParentOrb can automate reminders with your child, like being ready at a certain time, chore deadlines, and curfews. Lets add your first child."
+            "content": "ParentOrb can automate reminders with your child, like being ready at a certain time, chore deadlines, and curfews."
         },
         "responseCard": {
             "version": 1,

@@ -97,6 +97,8 @@ SERVER_EMAIL = 'support@parentorb.com'
 
 FB_MESSENGER_TOKEN = 'DEV'
 
+DEPLOY_ENV = 'DEV'
+
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
 

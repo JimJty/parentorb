@@ -9,6 +9,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "parentorb.settings_local")
 application = get_wsgi_application()
 from django.conf import settings as django_settings
 
+env.use_ssh_config = True
 
 @task
 def fb_get_started_button():
@@ -40,3 +41,17 @@ def fb_set_greeting():
 
     fb_get_greeting()
 
+@task
+def deploy_bot():
+
+    env.host_string = django_settings.DEPLOY_ENV
+
+    proj_path = "~/src/parentorb"
+
+    with cd("%s" % proj_path) :
+        run("pwd")
+        run("git pull")
+
+        run('source ../env2/bin/activate && pip install -r requirements.txt')
+
+        run('source ../env2/bin/activate && zappa update devbot')
