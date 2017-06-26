@@ -88,6 +88,15 @@ def handle_add_child(event):
                     "slots": slots,
                     "slotToElicit": "phone_number",
                 }, "sessionAttributes": session,}
+            if session["phone_attempts"] >= 4:
+                return { "dialogAction" :{
+                    "type": "Close",
+                    "fulfillmentState": "Failed",
+                    "message": {
+                        "contentType": "PlainText",
+                        "content": "Sorry, we didn't understand your phone number. Try starting over."
+                    }
+                }, "sessionAttributes": session,}
             else:
                 return {"dialogAction": {
                     "type": "Delegate",
