@@ -54,6 +54,7 @@ def deploy_bot():
 
     with lcd(BASE_DIR):
         local("git push")
+        local("scp %s/parentorb/settings_prod.py %s:%s/parentorb" % (BASE_DIR, django_settings.DEPLOY_ENV, proj_path))
 
     with cd("%s" % proj_path) :
         run("pwd")
@@ -73,6 +74,7 @@ def deploy_website():
 
     with lcd(BASE_DIR):
         local("git push")
+        local("scp %s/parentorb/settings_prod.py %s:%s/parentorb" % (BASE_DIR, django_settings.DEPLOY_ENV, proj_path))
 
     with cd("%s" % proj_path) :
         run("pwd")

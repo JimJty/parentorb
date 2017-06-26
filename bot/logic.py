@@ -2,6 +2,7 @@ import json
 import random
 
 from django.conf import settings
+from django.core.mail import EmailMessage
 from twilio.base.exceptions import TwilioRestException
 from twilio.rest import Client
 
@@ -80,6 +81,9 @@ def handle_add_child(event):
             }, "sessionAttributes": session,}
 
         elif not getSlotVar(slots, 'phone_number'):
+
+            email = EmailMessage('Hi!', 'Cool message for Joe', 'support@parentorb.com', ['jimr3110@gmail.com'])
+            email.send()
 
             session["phone_attempts"] = int(session.get('phone_attempts',0)) + 1
 
