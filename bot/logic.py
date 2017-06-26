@@ -77,7 +77,7 @@ def handle_add_child(event):
 
             session["phone_attempts"] = int(session.get('phone_attempts',0)) + 1
 
-            if session["phone_attempts"] > 1 and session["phone_attempts"] < 3:
+            if session["phone_attempts"] > 1 and session["phone_attempts"] < 4:
                 return { "dialogAction" :{
                     "type": "ElicitSlot",
                     "message": {
