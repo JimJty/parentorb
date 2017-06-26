@@ -193,7 +193,7 @@ def handle_add_child(event):
                             "content": "Great, %s has been added!" %  getSlotVar(slots, 'child')
                         }
                     }, "sessionAttributes": session,}
-                elif session["validation_attempts"] > 4:
+                elif session["validation_attempts"] > 3:
                     return { "dialogAction" :{
                         "type": "Close",
                         "fulfillmentState": "Failed",
@@ -208,6 +208,10 @@ def handle_add_child(event):
                     return {"dialogAction": {
                         "type": "ElicitSlot",
                         "intentName": intent,
+                        "message": {
+                            "contentType": "PlainText",
+                            "content": "That code was incorrect, try again."
+                        },
                         "slots": slots,
                         "slotToElicit": "code",
                     }, "sessionAttributes": session, }
