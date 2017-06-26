@@ -1,6 +1,7 @@
 import os
 
 from fabric.api import *
+from twilio.rest import Client
 
 from core.fb_api_wrapper import Messenger
 
@@ -55,3 +56,26 @@ def deploy_bot():
         run('source ../env2/bin/activate && pip install -r requirements.txt')
 
         run('source ../env2/bin/activate && zappa update devbot')
+
+
+@task
+def send_sms(number):
+
+    #testing twilio
+
+    client = Client(django_settings.TWILIO_ACCOUNT, django_settings.TWILIO_KEY)
+
+    message = client.messages.create(to=number, from_=django_settings.TWILIO_FROM_NUMBER, body="Hello!")
+
+    print message
+
+@task
+def lookup_number(number):
+
+    #testing twilio
+
+    client = Client(django_settings.TWILIO_ACCOUNT, django_settings.TWILIO_KEY)
+
+    resp = client.lookups.phone_numbers(number).fetch()
+
+    print resp.country_code, resp.phone_number

@@ -97,6 +97,10 @@ SERVER_EMAIL = 'support@parentorb.com'
 
 FB_MESSENGER_TOKEN = 'DEV'
 
+TWILIO_ACCOUNT = "DEV"
+TWILIO_KEY = "DEV"
+TWILIO_FROM_NUMBER = "DEV"
+
 DEPLOY_ENV = 'DEV'
 
 # Password validation

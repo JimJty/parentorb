@@ -12,16 +12,10 @@ def route_logic(event):
 
     if intent == "GetStarted":
         return handle_get_started(event)
+    elif intent == "AddChild":
+        return handle_add_child(event)
     else:
-
-        return {"dialogAction": {
-            "type": "Close",
-            "fulfillmentState": "Fulfilled",
-            "message": {
-                "contentType": "PlainText",
-                "content": "ParentOrb couldn't handle your request. Please try starting again."
-            },
-        }}
+        return get_unhandled_resp(event)
 
 
 def handle_get_started(event):
@@ -48,3 +42,29 @@ def handle_get_started(event):
             ]
         }
     }}
+
+def get_unhandled_resp(event):
+
+    return {"dialogAction": {
+            "type": "Close",
+            "fulfillmentState": "Fulfilled",
+            "message": {
+                "contentType": "PlainText",
+                "content": "ParentOrb couldn't handle your request. Please try starting again."
+            },
+        }}
+
+def handle_add_child(event):
+
+    source = event.get("invocationSource", None)
+    slots = event.get("currentIntent", {}).get("slots", None)
+
+    if source == "DialogCodeHook":
+
+        return {"dialogAction": {
+            "type": "Delegate",
+            "slots": slots,
+        }}
+
+    else:
+        return get_unhandled_resp(event)
