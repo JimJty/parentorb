@@ -84,6 +84,8 @@ def deploy_website():
 
         run('source ../env2/bin/activate && pip install -r requirements.txt')
 
+        run('source ../env2/bin/activate && python manage.py migrate --settings parentorb.settings_prod')
+
         run('source ../env2/bin/activate && zappa update prod')
 
 @task
