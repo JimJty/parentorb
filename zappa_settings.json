@@ -32,7 +32,7 @@
     },
     "vpc_config": {
       "SubnetIds": [
-        "subnet-7a9c3447"
+        "subnet-be7005f6","subnet-00d6625a","subnet-314d5854","subnet-148d3138","subnet-04c1f038"
       ],
       "SecurityGroupIds": [
         "sg-267daf57"
