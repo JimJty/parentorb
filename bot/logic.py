@@ -72,22 +72,26 @@ def handle_add_child(event):
 
         elif not getSlotVar(slots, 'phone_number'):
 
-            session["phone_attempts"] = session.get('phone_attempts',0) + 1
-            return {"dialogAction": {
-                "type": "Delegate",
-                "slots": slots,
-            }, "sessionAttributes": session,}
+            session["phone_attempts"] = int(session.get('phone_attempts',0)) + 1
 
-            # return { "dialogAction" :{
-            #     "type": "ElicitSlot",
-            #     "message": {
-            #         "contentType": "PlainText",
-            #         "content": "The phone number appears to be invalid, try entering just numbers."
-            #     },
-            #     "intentName": intent,
-            #     "slots": slots,
-            #     "slotToElicit": "phone_number",
-            # }}
+            if session["phone_attempts"] > 1 and session["phone_attempts"] < 3:
+                return { "dialogAction" :{
+                    "type": "ElicitSlot",
+                    "message": {
+                        "contentType": "PlainText",
+                        "content": "The phone number appears to be invalid, try entering just numbers."
+                    },
+                    "intentName": intent,
+                    "slots": slots,
+                    "slotToElicit": "phone_number",
+                }, "sessionAttributes": session,}
+            else:
+                return {"dialogAction": {
+                    "type": "Delegate",
+                    "slots": slots,
+                }, "sessionAttributes": session,}
+
+
 
         else:
             return {"dialogAction": {
