@@ -72,7 +72,7 @@ def handle_add_child(event):
         if not getSlotVar(slots, 'child'):
 
             session["phone_attempts"] = 0
-            session["validated_phone"] = False
+            session["validated_phone"] = "0"
 
             return {"dialogAction": {
                 "type": "Delegate",
@@ -113,16 +113,16 @@ def handle_add_child(event):
 
         elif not getSlotVar(slots, 'code'):
 
-            validated_phone = session.get("validated_phone", False)
+            validated_phone = session.get("validated_phone", "0") == "1"
             phone_number = getSlotVar(slots, 'phone_number')
 
-            if not validated_phone and phone_number:
+            if not validated_phone  and phone_number:
                 client = Client(settings.TWILIO_ACCOUNT, settings.TWILIO_KEY)
 
                 try:
                     resp = client.lookups.phone_numbers(phone_number).fetch()
 
-                    session["validated_phone"] = True
+                    session["validated_phone"] = "1"
                     slots["phone_number"] = resp.phone_number
 
                     validation_code = ''.join(random.SystemRandom().choice(['0','1','2','3','4','5','6','7','8','9']) for _ in range(5))
