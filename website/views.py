@@ -16,9 +16,6 @@ def home(request):
 
     }
 
-    email = EmailMessage('Hi!', 'Cool message for Joe', 'support@parentorb.com', ['jimr3110@gmail.com'])
-    email.send()
-
     return render(request, 'front/home.html', context)
 
 def error_test(request):

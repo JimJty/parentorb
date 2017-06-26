@@ -1,6 +1,7 @@
 import json
 import random
 
+import requests
 from django.conf import settings
 from django.core.mail import EmailMessage
 from twilio.base.exceptions import TwilioRestException
@@ -82,8 +83,10 @@ def handle_add_child(event):
 
         elif not getSlotVar(slots, 'phone_number'):
 
-            email = EmailMessage('Hi!', 'Cool message for Joe', 'support@parentorb.com', ['jimr3110@gmail.com'])
-            email.send()
+            print "making outside call"
+            url = "http://en.wikipedia.org/static/images/project-logos/enwiki.png"
+            r = requests.get(url)
+            print "status",r.status_code
 
             session["phone_attempts"] = int(session.get('phone_attempts',0)) + 1
 
