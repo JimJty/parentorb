@@ -70,7 +70,7 @@ def handle_add_child(event):
             }}
 
         elif not getSlotVar(slots, 'phone_number'):
-            return {
+            return { "dialogAction" :{
                 "type": "ElicitSlot",
                 "message": {
                     "contentType": "PlainText",
@@ -79,7 +79,7 @@ def handle_add_child(event):
                 "intentName": intent,
                 "slots": slots,
                 "slotToElicit": "phone_number",
-            }
+            }}
 
         else:
             return {"dialogAction": {
