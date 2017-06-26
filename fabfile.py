@@ -65,6 +65,24 @@ def deploy_bot():
 
 
 @task
+def deploy_website():
+
+    env.host_string = django_settings.DEPLOY_ENV
+
+    proj_path = "~/src/parentorb"
+
+    with lcd(BASE_DIR):
+        local("git push")
+
+    with cd("%s" % proj_path) :
+        run("pwd")
+        run("git pull")
+
+        run('source ../env2/bin/activate && pip install -r requirements.txt')
+
+        run('source ../env2/bin/activate && zappa update prod')
+
+@task
 def send_sms(number):
 
     #testing twilio
