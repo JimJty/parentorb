@@ -59,7 +59,7 @@ def handle_add_child(event):
     source = event.get("invocationSource", None)
     slots = event.get("currentIntent", {}).get("slots", None)
     intent = event.get("currentIntent", {}).get("name", None)
-    session = event.get("sessionAttributes",{})
+    session = event.get("sessionAttributes",{}) or {}
 
 
     if source == "DialogCodeHook":
