@@ -1,6 +1,7 @@
 import os
 
 from fabric.api import *
+from os.path import dirname
 from twilio.rest import Client
 
 from core.fb_api_wrapper import Messenger
@@ -11,6 +12,8 @@ application = get_wsgi_application()
 from django.conf import settings as django_settings
 
 env.use_ssh_config = True
+
+BASE_DIR = dirname(env.real_fabfile)
 
 @task
 def fb_get_started_button():
@@ -48,6 +51,9 @@ def deploy_bot():
     env.host_string = django_settings.DEPLOY_ENV
 
     proj_path = "~/src/parentorb"
+
+    with lcd(BASE_DIR):
+        local("git push")
 
     with cd("%s" % proj_path) :
         run("pwd")
