@@ -65,16 +65,19 @@ def handle_add_child(event):
     if source == "DialogCodeHook":
 
         if not getSlotVar(slots, 'child'):
+
+            session["phone_attempts"] = 0
+
             return {"dialogAction": {
                 "type": "Delegate",
                 "slots": slots,
-            }}
+            }, "sessionAttributes": session,}
 
         elif not getSlotVar(slots, 'phone_number'):
 
             session["phone_attempts"] = int(session.get('phone_attempts',0)) + 1
 
-            if session["phone_attempts"] > 2 and session["phone_attempts"] < 4:
+            if session["phone_attempts"] > 1 and session["phone_attempts"] < 3:
                 return { "dialogAction" :{
                     "type": "ElicitSlot",
                     "message": {
