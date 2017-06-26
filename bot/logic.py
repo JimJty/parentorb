@@ -1,5 +1,9 @@
 import json
 
+from django.conf import settings
+from twilio.base.exceptions import TwilioRestException
+from twilio.rest import Client
+
 from core.models import AppUser
 
 
@@ -67,6 +71,7 @@ def handle_add_child(event):
         if not getSlotVar(slots, 'child'):
 
             session["phone_attempts"] = 0
+            session["validated_phone"] = False
 
             return {"dialogAction": {
                 "type": "Delegate",
@@ -98,18 +103,58 @@ def handle_add_child(event):
                     }
                 }, "sessionAttributes": session,}
             else:
+
+
                 return {"dialogAction": {
                     "type": "Delegate",
                     "slots": slots,
                 }, "sessionAttributes": session,}
 
+        elif not getSlotVar(slots, 'code'):
 
+            validated_phone = session.get("validated_phone", False)
+            phone_number = getSlotVar(slots, 'phone_number')
+
+            if not validated_phone and phone_number:
+                client = Client(settings.TWILIO_ACCOUNT, settings.TWILIO_KEY)
+
+                try:
+                    resp = client.lookups.phone_numbers(phone_number).fetch()
+
+                    session["validated_phone"] = True
+                    slots["phone_number"] = resp.phone_number
+
+                    return {"dialogAction": {
+                        "type": "Delegate",
+                        "slots": slots,
+                    }, "sessionAttributes": session, }
+
+                except TwilioRestException:
+
+                    session["phone_attempts"] = 0
+                    slots["phone_number"] = None
+
+                    return {"dialogAction": {
+                        "type": "ElicitSlot",
+                        "message": {
+                            "contentType": "PlainText",
+                            "content": "The phone number was not valid, make sure to include the area code."
+                        },
+                        "intentName": intent,
+                        "slots": slots,
+                        "slotToElicit": "phone_number",
+                    }, "sessionAttributes": session, }
+
+            return {"dialogAction": {
+                        "type": "Delegate",
+                        "slots": slots,
+                    }, "sessionAttributes": session, }
 
         else:
             return {"dialogAction": {
                 "type": "Delegate",
                 "slots": slots,
-            }}
+            }, "sessionAttributes": session, }
 
 
 
