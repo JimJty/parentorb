@@ -76,8 +76,7 @@ def handle_add_child(event):
             return {"dialogAction": {
                 "type": "Delegate",
                 "slots": slots,
-                "sessionAttributes": session,
-            }}
+            }, "sessionAttributes": session,}
 
             # return { "dialogAction" :{
             #     "type": "ElicitSlot",
