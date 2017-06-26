@@ -180,7 +180,7 @@ def handle_add_child(event):
             if not has_validated_code:
                 validation_code = session["validation_code"]
                 hashed_code =  hashlib.md5()
-                hashed_code.update("%s%s" % (code, settings.SECRET_KEY ))
+                hashed_code.update("%s%s" % (code, settings.SECRET_KEY )).hexdigest()
                 if validation_code == hashed_code:
 
                     #add the number to the user
@@ -193,7 +193,7 @@ def handle_add_child(event):
                             "content": "Great, %s has been added!" %  getSlotVar(slots, 'child')
                         }
                     }, "sessionAttributes": session,}
-                elif session["validation_attempts"] > 3:
+                elif session["validation_attempts"] > 2:
                     return { "dialogAction" :{
                         "type": "Close",
                         "fulfillmentState": "Failed",
