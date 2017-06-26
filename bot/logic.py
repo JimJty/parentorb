@@ -1,3 +1,4 @@
+import hashlib
 import json
 import random
 
@@ -75,6 +76,9 @@ def handle_add_child(event):
 
             session["phone_attempts"] = 0
             session["validated_phone"] = "0"
+            session["has_validated_code"] = "0"
+            session["validation_code"] = ""
+            session["validation_attempts"] = 0
 
             return {"dialogAction": {
                 "type": "Delegate",
@@ -82,11 +86,6 @@ def handle_add_child(event):
             }, "sessionAttributes": session,}
 
         elif not getSlotVar(slots, 'phone_number'):
-
-            print "making outside call"
-            url = "http://en.wikipedia.org/static/images/project-logos/enwiki.png"
-            r = requests.get(url)
-            print "status",r.status_code
 
             session["phone_attempts"] = int(session.get('phone_attempts',0)) + 1
 
@@ -127,21 +126,19 @@ def handle_add_child(event):
                 client = Client(settings.TWILIO_ACCOUNT, settings.TWILIO_KEY)
 
                 try:
-                    print "phone_number", phone_number
-
                     resp = client.lookups.phone_numbers(phone_number).fetch()
 
                     session["validated_phone"] = "1"
                     slots["phone_number"] = resp.phone_number
 
-                    print "phone_number2", resp.phone_number
-
                     validation_code = ''.join(random.SystemRandom().choice(['0','1','2','3','4','5','6','7','8','9']) for _ in range(5))
-                    session["validation_code"] = validation_code
+
+                    hashed_code =  hashlib.md5()
+                    hashed_code.update("%s%s" % (validation_code, settings.SECRET_KEY ))
+                    session["validation_code"] = hashed_code.hexdigest()
 
                     msg_body = "Hello, your parent is using ParentOrb. Please send them this code: %s" % validation_code
 
-                    print "msg_body", msg_body
                     try:
                         client.messages.create(to=phone_number, from_=settings.TWILIO_FROM_NUMBER, body=msg_body)
                     except Exception, inst:
@@ -173,6 +170,56 @@ def handle_add_child(event):
                         "type": "Delegate",
                         "slots": slots,
                     }, "sessionAttributes": session, }
+
+        elif getSlotVar(slots, 'code'):
+
+            has_validated_code= session.get("has_validated_code", "0") == "1"
+            session["validation_attempts"] = int(session.get('validation_attempts',0)) + 1
+            code = getSlotVar(slots, 'code')
+
+            if not has_validated_code:
+                validation_code = session["validation_code"]
+                hashed_code =  hashlib.md5()
+                hashed_code.update("%s%s" % (code, settings.SECRET_KEY ))
+                if validation_code == hashed_code:
+
+                    #add the number to the user
+
+                    return { "dialogAction" :{
+                        "type": "Close",
+                        "fulfillmentState": "Fulfilled",
+                        "message": {
+                            "contentType": "PlainText",
+                            "content": "Great, %s has been added!" %  getSlotVar(slots, 'child')
+                        }
+                    }, "sessionAttributes": session,}
+                elif session["validation_attempts"] > 4:
+                    return { "dialogAction" :{
+                        "type": "Close",
+                        "fulfillmentState": "Failed",
+                        "message": {
+                            "contentType": "PlainText",
+                            "content": "Sorry, we couldn't verify your number. Try starting over."
+                        }
+                    }, "sessionAttributes": session,}
+                else:
+                    slots["code"] = None
+
+                    return {"dialogAction": {
+                        "type": "ElicitSlot",
+                        "intentName": intent,
+                        "slots": slots,
+                        "slotToElicit": "code",
+                    }, "sessionAttributes": session, }
+
+
+            return {"dialogAction": {
+                        "type": "Delegate",
+                        "slots": slots,
+                    }, "sessionAttributes": session, }
+
+
+
 
         else:
             return {"dialogAction": {
