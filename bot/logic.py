@@ -180,8 +180,8 @@ def handle_add_child(event):
             if not has_validated_code:
                 validation_code = session["validation_code"]
                 hashed_code =  hashlib.md5()
-                hashed_code.update("%s%s" % (code, settings.SECRET_KEY )).hexdigest()
-                if validation_code == hashed_code:
+                hashed_code.update("%s%s" % (code, settings.SECRET_KEY ))
+                if validation_code == hashed_code.hexdigest():
 
                     #add the number to the user
 
