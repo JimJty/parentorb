@@ -120,16 +120,21 @@ def handle_add_child(event):
                 client = Client(settings.TWILIO_ACCOUNT, settings.TWILIO_KEY)
 
                 try:
+                    print "phone_number", phone_number
+
                     resp = client.lookups.phone_numbers(phone_number).fetch()
 
                     session["validated_phone"] = "1"
                     slots["phone_number"] = resp.phone_number
+
+                    print "phone_number2", resp.phone_number
 
                     validation_code = ''.join(random.SystemRandom().choice(['0','1','2','3','4','5','6','7','8','9']) for _ in range(5))
                     session["validation_code"] = validation_code
 
                     msg_body = "Hello, your parent is using ParentOrb. Please send them this code: %s" % validation_code
 
+                    print "msg_body", msg_body
                     try:
                         client.messages.create(to=phone_number, from_=settings.TWILIO_FROM_NUMBER, body=msg_body)
                     except Exception, inst:
