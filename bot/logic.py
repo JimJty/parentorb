@@ -1,4 +1,5 @@
 import json
+import random
 
 from django.conf import settings
 from twilio.base.exceptions import TwilioRestException
@@ -124,10 +125,21 @@ def handle_add_child(event):
                     session["validated_phone"] = True
                     slots["phone_number"] = resp.phone_number
 
+                    validation_code = ''.join(random.SystemRandom().choice(['0','1','2','3','4','5','6','7','8','9']) for _ in range(5))
+                    session["validation_code"] = validation_code
+
+                    msg_body = "Hello, your parent is using ParentOrb. Please send them this code: %s" % validation_code
+
+                    try:
+                        client.messages.create(to=phone_number, from_=settings.TWILIO_FROM_NUMBER, body=msg_body)
+                    except Exception, inst:
+                        raise Exception("sms_send_error:%s" % inst)
+
                     return {"dialogAction": {
                         "type": "Delegate",
                         "slots": slots,
                     }, "sessionAttributes": session, }
+
 
                 except TwilioRestException:
 
