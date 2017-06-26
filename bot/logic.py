@@ -59,6 +59,7 @@ def handle_add_child(event):
     source = event.get("invocationSource", None)
     slots = event.get("currentIntent", {}).get("slots", None)
     intent = event.get("currentIntent", {}).get("name", None)
+    session = event.get("sessionAttributes",{})
 
 
     if source == "DialogCodeHook":
@@ -70,16 +71,21 @@ def handle_add_child(event):
             }}
 
         elif not getSlotVar(slots, 'phone_number'):
-            return { "dialogAction" :{
-                "type": "ElicitSlot",
-                "message": {
-                    "contentType": "PlainText",
-                    "content": "The phone number appears to be invalid, try entering just numbers."
-                },
-                "intentName": intent,
+            return {"dialogAction": {
+                "type": "Delegate",
                 "slots": slots,
-                "slotToElicit": "phone_number",
             }}
+
+            # return { "dialogAction" :{
+            #     "type": "ElicitSlot",
+            #     "message": {
+            #         "contentType": "PlainText",
+            #         "content": "The phone number appears to be invalid, try entering just numbers."
+            #     },
+            #     "intentName": intent,
+            #     "slots": slots,
+            #     "slotToElicit": "phone_number",
+            # }}
 
         else:
             return {"dialogAction": {
