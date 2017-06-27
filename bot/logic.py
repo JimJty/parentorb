@@ -69,6 +69,8 @@ def handle_add_child(event):
     intent = event.get("currentIntent", {}).get("name", None)
     session = event.get("sessionAttributes",{}) or {}
 
+    userId = event.get("userId")
+    user = AppUser.setup(userId)
 
     if source == "DialogCodeHook":
 

@@ -1,3 +1,4 @@
+import json
 import os
 
 from fabric.api import *
@@ -46,6 +47,14 @@ def fb_set_greeting():
     fb_get_greeting()
 
 @task
+def fb_get_profile():
+
+    #testing
+    m = Messenger(django_settings.FB_MESSENGER_TOKEN)
+    print json.dumps(m.get_profile("1402413149874881"))
+
+
+@task
 def deploy_bot():
 
     env.host_string = django_settings.DEPLOY_ENV
@@ -87,6 +96,18 @@ def deploy_website():
         run('source ../env2/bin/activate && python manage.py migrate --settings parentorb.settings_prod')
 
         run('source ../env2/bin/activate && zappa update prod')
+
+@task
+def migrate():
+
+    local("./manage.py makemigrations")
+    local("./manage.py migrate")
+    local("git add *migrations*")
+
+@task
+def freeze():
+
+    local("pip freeze > requirements.txt")
 
 @task
 def send_sms(number):

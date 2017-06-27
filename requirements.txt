@@ -11,10 +11,12 @@ click==6.7
 cryptography==1.9
 Django==1.11.2
 django-mailgun==0.9.1
+django-pgjsonb==0.0.25
 docutils==0.13.1
 durationpy==0.4
 enum34==1.1.6
 Fabric==1.13.2
+funcsigs==1.0.2
 future==0.16.0
 futures==3.1.1
 hjson==2.0.7
@@ -23,7 +25,9 @@ ipaddress==1.0.18
 jmespath==0.9.3
 kappa==0.6.0
 lambda-packages==0.15.1
+mock==2.0.0
 paramiko==2.2.1
+pbr==3.1.1
 placebo==0.8.1
 psycopg2==2.7.1
 pyasn1==0.2.3
