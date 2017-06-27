@@ -68,6 +68,28 @@ class Messenger:
         if error:
             raise FacebookException("FB API Error: %s" % error)
 
+    def get_menu(self):
+        params = {"fields": "persistent_menu", "access_token": self.access_token}
+        url = self.BASE_URL + "/me/messenger_profile"
+
+        resp = requests.get(url, params=params)
+
+        return resp.json()
+
+    def set_menu(self, call_to_actions):
+        params = {"persistent_menu":[
+            {
+                "locale": "default",
+                "composer_input_disabled":False,
+                "call_to_actions": call_to_actions
+            }],
+            "access_token": self.access_token
+        }
+        url = self.BASE_URL + "/me/messenger_profile"
+
+        resp = requests.post(url, json=params)
+
+        return resp.json()
 
 class FacebookException(Exception):
     pass

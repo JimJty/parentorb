@@ -31,6 +31,40 @@ def fb_set_started_button():
     fb_get_started_button()
 
 @task
+def fb_get_menu():
+
+    m = Messenger(django_settings.FB_MESSENGER_TOKEN)
+    print m.get_menu()
+
+@task
+def fb_set_menu():
+
+    calls_to_actions = [
+        {
+            "title": "Update Me",
+            "type": "postback",
+            "payload": "Update Me",
+        },
+        {
+            "title": "Settings",
+            "type": "nested",
+            "call_to_actions": [
+                {
+                    "title": "Children",
+                    "type": "postback",
+                    "payload": "Show Children"
+                },
+            ]
+        },
+    ]
+
+
+    m = Messenger(django_settings.FB_MESSENGER_TOKEN)
+    print m.set_menu(calls_to_actions)
+
+    fb_get_menu()
+
+@task
 def fb_get_greeting():
 
     m = Messenger(django_settings.FB_MESSENGER_TOKEN)
