@@ -197,7 +197,7 @@ def handle_add_child(event):
                 hashed_code.update("%s%s" % (code, settings.SECRET_KEY ))
                 if validation_code == hashed_code.hexdigest():
 
-                    #add the number to the user
+                    #add the child to the user
                     user.add_child(getSlotVar(slots, 'child'), getSlotVar(slots, 'phone_number'))
 
                     return { "dialogAction" :{
