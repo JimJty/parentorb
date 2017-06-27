@@ -10,6 +10,7 @@ from twilio.rest import Client
 
 from core.models import AppUser
 
+MAX_CHILDREN = 5
 
 def route_logic(event):
     print "Event: %s" % json.dumps(event)
@@ -82,10 +83,21 @@ def handle_add_child(event):
             session["validation_code"] = ""
             session["validation_attempts"] = 0
 
-            return {"dialogAction": {
-                "type": "Delegate",
-                "slots": slots,
-            }, "sessionAttributes": session,}
+            current_child_count = user.children.all().count()
+            if current_child_count >= MAX_CHILDREN:
+                return { "dialogAction" :{
+                        "type": "Close",
+                        "fulfillmentState": "Failed",
+                        "message": {
+                            "contentType": "PlainText",
+                            "content": "You can only add up to 5 children."
+                        }
+                    }, "sessionAttributes": session,}
+            else:
+                return {"dialogAction": {
+                    "type": "Delegate",
+                    "slots": slots,
+                }, "sessionAttributes": session,}
 
         elif not getSlotVar(slots, 'phone_number'):
 
@@ -186,6 +198,7 @@ def handle_add_child(event):
                 if validation_code == hashed_code.hexdigest():
 
                     #add the number to the user
+                    user.add_child(getSlotVar(slots, 'child'), getSlotVar(slots, 'phone_number'))
 
                     return { "dialogAction" :{
                         "type": "Close",

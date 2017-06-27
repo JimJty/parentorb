@@ -63,6 +63,28 @@ class AppUser(models.Model):
 
         return user
 
+    def add_child(self, first_name, phone_number):
+
+        child = Child()
+
+        if not first_name:
+            first_name = "Child"
+
+        child.user = self
+        child.first_name = first_name
+        child.phone_number = phone_number
+
+        child.save()
+
+class Child(models.Model):
+
+    user = models.ForeignKey(AppUser, null=False, blank=False, related_name="children")
+
+    first_name = models.CharField(max_length=200, blank=True, null=True)
+    phone_number = models.CharField(max_length=200, blank=True, null=True)
+
+    add_date = models.DateTimeField(blank=False, auto_now_add=True)
+    edit_date = models.DateTimeField(blank=False, auto_now=True)
 
 
 

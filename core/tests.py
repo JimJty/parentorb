@@ -5,7 +5,7 @@ from django.test import TestCase
 from mock import mock
 
 from core.fb_api_wrapper import FacebookException
-from core.models import AppUser
+from core.models import AppUser, Child
 
 
 class TestAppUser(TestCase):
@@ -15,6 +15,7 @@ class TestAppUser(TestCase):
 
     def tearDown(self):
         AppUser.objects.all().delete()
+        Child.objects.all().delete()
 
 
     @mock.patch('core.fb_api_wrapper.Messenger.get_profile')
@@ -41,6 +42,10 @@ class TestAppUser(TestCase):
         user2 = AppUser.setup("testid")
 
         self.assertEquals(user2.id, user.id)
+
+        user.add_child("Jane", "+16027226814")
+
+        self.assertEquals(user.children.all().count(), 1)
 
     @mock.patch('core.fb_api_wrapper.Messenger.get_profile', side_effect=FacebookException)
     def test_setup_no_facebook(self, get_profile):
