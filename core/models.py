@@ -76,6 +76,18 @@ class AppUser(models.Model):
 
         child.save()
 
+    def get_children(self):
+
+        children = self.children.all().order_by('first_name','id')
+
+        return children
+
+    def get_reminders(self):
+
+        reminders = Reminder.objects.filter(child__user=self)
+
+        return reminders
+
 class Child(models.Model):
 
     user = models.ForeignKey(AppUser, null=False, blank=False, related_name="children")

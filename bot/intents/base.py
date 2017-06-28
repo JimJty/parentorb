@@ -37,7 +37,8 @@ class Intent:
 
         return self.slots.get(key_name, None)
 
-    def _resp_generic(self):
+    @staticmethod
+    def resp_generic(event):
 
         resp = {
             "dialogAction": {
@@ -45,7 +46,7 @@ class Intent:
                 "fulfillmentState": "Fulfilled",
                 "message": {
                     "contentType": "PlainText",
-                    "content": "I'm not sure what to do. Please try starting again."
+                    "content": "I'm not sure what to do, try 'Update Me'."
                 },
             }
         }
@@ -63,5 +64,5 @@ class Intent:
         if result:
             return result
         else:
-            return self._resp_generic()
+            return Intent.resp_generic(event)
 

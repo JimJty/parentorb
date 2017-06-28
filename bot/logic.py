@@ -10,6 +10,7 @@ from django.core.mail import EmailMessage
 from twilio.base.exceptions import TwilioRestException
 from twilio.rest import Client
 
+from bot.intents.base import Intent
 from core.models import AppUser
 import logging
 logger = logging.getLogger()
@@ -25,42 +26,16 @@ def route_logic(event):
 
     intent_obj = init_intent(intent)
 
-    if intent == "GetStarted":
-        result = handle_get_started(event)
-    elif intent == "AddChild":
+    if intent == "AddChild":
         result = handle_add_child(event)
     elif intent_obj:
         result = intent_obj.handle(event)
     else:
-        result = get_unhandled_resp(event)
+        result = Intent.resp_generic(event)
 
     logging.info("Result: %s", json.dumps(result, indent=4))
     return result
 
-def handle_get_started(event):
-    return {"dialogAction": {
-        "type": "Close",
-        "fulfillmentState": "Fulfilled",
-        "message": {
-            "contentType": "PlainText",
-            "content": "ParentOrb can automate reminders with your child, like being ready at a certain time, chore deadlines, and curfews."
-        },
-        "responseCard": {
-            "version": 1,
-            "contentType": "application/vnd.amazonaws.card.generic",
-            "genericAttachments": [
-                {
-                    "title": "Let's add your first child.",
-                    "buttons": [
-                        {
-                            "text": "Add Child",
-                            "value": "Add Child"
-                        }
-                    ]
-                }
-            ]
-        }
-    }}
 
 def get_unhandled_resp(event):
 
