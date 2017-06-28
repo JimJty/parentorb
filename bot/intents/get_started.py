@@ -107,7 +107,7 @@ class Intent(BaseIntent):
                 "fulfillmentState": "Fulfilled",
                 "message": {
                     "contentType": "PlainText",
-                    "content": "You're back, try 'Update Me'."
+                    "content": "You're back! Try 'Update Me'."
                 },
             },
             "sessionAttributes": self.session,

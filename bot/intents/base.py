@@ -42,13 +42,28 @@ class Intent:
 
         resp = {
             "dialogAction": {
-                "type": "Close",
-                "fulfillmentState": "Fulfilled",
+                "type": "ElicitIntent",
                 "message": {
                     "contentType": "PlainText",
-                    "content": "I'm not sure what to do, try 'Update Me'."
+                    "content": "I'm not sure what to do."
                 },
-            }
+                "responseCard": {
+                    "version": 1,
+                    "contentType": "application/vnd.amazonaws.card.generic",
+                    "genericAttachments": [
+                        {
+                            "title": "Try:",
+                            "buttons": [
+                                {
+                                    "text": "Update Me",
+                                    "value": "update me"
+                                },
+                            ]
+                        }
+                    ]
+                }
+            },
+            "sessionAttributes": {},
         }
 
         return resp
