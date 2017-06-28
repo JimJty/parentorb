@@ -210,30 +210,29 @@ def handle_add_child(event):
                     #add the child to the user
                     user.add_child(getSlotVar(slots, 'child'), getSlotVar(slots, 'phone_number'))
 
-
-                    return { "dialogAction" :{
-                            "type": "Close",
-                            "fulfillmentState": "Fulfilled",
+                    return {"dialogAction":
+                        {
+                            "type": "ElicitIntent",
                             "message": {
                                 "contentType": "PlainText",
-                                "content": "Great, %s has been added!" %  getSlotVar(slots, 'child')
+                                "content": "Great, %s has been added!" % getSlotVar(slots, 'child')
+                            },
+                            "responseCard": {
+                                "version": 1,
+                                "contentType": "application/vnd.amazonaws.card.generic",
+                                "genericAttachments": [
+                                    {
+                                        "title": "Now, add your first reminder.",
+                                        "buttons": [
+                                            {
+                                                "text": "Add Reminder",
+                                                "value": "Add Reminder"
+                                            }
+                                        ]
+                                    }
+                                ]
                             }
-                        },
-                        "responseCard": {
-                            "version": 1,
-                            "contentType": "application/vnd.amazonaws.card.generic",
-                            "genericAttachments": [
-                                {
-                                    "title": "Now, add your first reminder.",
-                                    "buttons": [
-                                        {
-                                            "text": "Add Reminder",
-                                            "value": "Add Reminder"
-                                        }
-                                    ]
-                                }
-                            ]
-                        }, "sessionAttributes": session,}
+                        }, "sessionAttributes": {}, }
                 elif session["validation_attempts"] > 2:
                     return { "dialogAction" :{
                         "type": "Close",
