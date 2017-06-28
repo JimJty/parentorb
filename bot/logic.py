@@ -13,6 +13,8 @@ from twilio.rest import Client
 from core.models import AppUser
 import logging
 logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+
 
 MAX_CHILDREN = 5
 
