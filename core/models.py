@@ -87,4 +87,30 @@ class Child(models.Model):
     edit_date = models.DateTimeField(blank=False, auto_now=True)
 
 
+class Reminder(models.Model):
+
+    child = models.ForeignKey(Child, null=False, blank=False, related_name="reminders")
+
+    KIND_CHOICES = (
+        (100, 'Ready By'),
+        (200, 'Chore'),
+        (300, 'Curfew'),
+    )
+    kind = models.IntegerField(choices = KIND_CHOICES, blank=False, null=False)
+
+    at_time = models.TimeField(blank=False, null=False)
+
+    on_mon = models.BooleanField(default=False, null=False)
+    on_tue = models.BooleanField(default=False, null=False)
+    on_wed = models.BooleanField(default=False, null=False)
+    on_thu = models.BooleanField(default=False, null=False)
+    on_fri = models.BooleanField(default=False, null=False)
+    on_sat = models.BooleanField(default=False, null=False)
+    on_sun = models.BooleanField(default=False, null=False)
+
+    active = models.BooleanField(default=True, null=False)
+
+    add_date = models.DateTimeField(blank=False, auto_now_add=True)
+    edit_date = models.DateTimeField(blank=False, auto_now=True)
+
 

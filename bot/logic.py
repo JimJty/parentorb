@@ -1,6 +1,8 @@
 import hashlib
+import importlib
 import json
 import random
+import re
 
 import requests
 from django.conf import settings
@@ -9,23 +11,30 @@ from twilio.base.exceptions import TwilioRestException
 from twilio.rest import Client
 
 from core.models import AppUser
+import logging
+
+logging.basicConfig(format="%(levelname)s: %(message)s", level=logging.INFO)
 
 MAX_CHILDREN = 5
 
 def route_logic(event):
-    print "Event: %s" % json.dumps(event)
+    logging.info("Event: %s", json.dumps(event, indent=4))
 
     intent = event.get("currentIntent", {}).get("name", None)
 
-    print "Intent", intent
+    intent_obj = init_intent(intent)
 
     if intent == "GetStarted":
-        return handle_get_started(event)
+        result = handle_get_started(event)
     elif intent == "AddChild":
-        return handle_add_child(event)
+        result = handle_add_child(event)
+    elif intent_obj:
+        result = intent_obj.handle(event)
     else:
-        return get_unhandled_resp(event)
+        result = get_unhandled_resp(event)
 
+    logging.info("Result: %s", json.dumps(result, indent=4))
+    return result
 
 def handle_get_started(event):
     return {"dialogAction": {
@@ -40,7 +49,7 @@ def handle_get_started(event):
             "contentType": "application/vnd.amazonaws.card.generic",
             "genericAttachments": [
                 {
-                    "title": " Lets add your first child.",
+                    "title": "Let's add your first child.",
                     "buttons": [
                         {
                             "text": "Add Child",
@@ -200,14 +209,30 @@ def handle_add_child(event):
                     #add the child to the user
                     user.add_child(getSlotVar(slots, 'child'), getSlotVar(slots, 'phone_number'))
 
+
                     return { "dialogAction" :{
-                        "type": "Close",
-                        "fulfillmentState": "Fulfilled",
-                        "message": {
-                            "contentType": "PlainText",
-                            "content": "Great, %s has been added!" %  getSlotVar(slots, 'child')
-                        }
-                    }, "sessionAttributes": session,}
+                            "type": "Close",
+                            "fulfillmentState": "Fulfilled",
+                            "message": {
+                                "contentType": "PlainText",
+                                "content": "Great, %s has been added!" %  getSlotVar(slots, 'child')
+                            }
+                        },
+                        "responseCard": {
+                            "version": 1,
+                            "contentType": "application/vnd.amazonaws.card.generic",
+                            "genericAttachments": [
+                                {
+                                    "title": "Now, add your first reminder.",
+                                    "buttons": [
+                                        {
+                                            "text": "Add Reminder",
+                                            "value": "Add Reminder"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }, "sessionAttributes": session,}
                 elif session["validation_attempts"] > 2:
                     return { "dialogAction" :{
                         "type": "Close",
@@ -252,6 +277,25 @@ def handle_add_child(event):
 
 
 #helpers
+
+def init_intent(intent_name):
+
+    intent_name = convert_camelcase(intent_name)
+
+    try:
+        module = importlib.import_module("bot.intents.%s" % intent_name)
+        cls = getattr(module, 'Intent')
+
+        obj = cls()
+
+        return obj
+
+    except ImportError:
+        return None
+
+def convert_camelcase(name):
+    s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
+    return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
 
 def getSesVar(event, key_name):
 

@@ -1,0 +1,20 @@
+{
+    "currentIntent": {
+        "slots": {
+            "kind": null
+        },
+        "name": "AddReminder",
+        "confirmationStatus": "None"
+    },
+    "bot": {
+        "alias": null,
+        "version": "$LATEST",
+        "name": "ParentOrb"
+    },
+    "userId": "ts8hlvf0sa5rk21ba53ujdy4qs9jnlzz",
+    "inputTranscript": "add reminder",
+    "invocationSource": "DialogCodeHook",
+    "outputDialogMode": "Text",
+    "messageVersion": "1.0",
+    "sessionAttributes": null
+}
