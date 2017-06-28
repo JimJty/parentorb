@@ -12,13 +12,12 @@ from twilio.rest import Client
 
 from core.models import AppUser
 import logging
-
-logging.basicConfig(format="%(levelname)s: %(message)s", level=logging.INFO)
+logger = logging.getLogger()
 
 MAX_CHILDREN = 5
 
 def route_logic(event):
-    logging.info("Event: %s", json.dumps(event, indent=4))
+    logger.info("Event: %s", json.dumps(event, indent=4))
 
     intent = event.get("currentIntent", {}).get("name", None)
 
@@ -279,6 +278,9 @@ def handle_add_child(event):
 #helpers
 
 def init_intent(intent_name):
+
+    if not intent_name:
+        return None
 
     intent_name = convert_camelcase(intent_name)
 
