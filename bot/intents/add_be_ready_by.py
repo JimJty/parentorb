@@ -53,7 +53,7 @@ class Intent(BaseIntent):
             children = self.user.get_children()
             buttons = []
             for c in children:
-                buttons.append(MenuButton(c.first_name,c.first_name + "|" + c.id))
+                buttons.append(MenuButton(c.first_name,c.first_name))
 
             return self.build_template(
                 case="no_slot_child",
