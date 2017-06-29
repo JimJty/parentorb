@@ -170,20 +170,39 @@ class Intent(BaseIntent):
             )
 
         #no_repeat_day
-        elif is_repeated and not self.session_value('repeat_days'):
+        elif is_repeated and not self.session_value('repeat_days') and self.current_slot == 'repeat_day':
 
-            msg = "What days do you want to repeat on?"
+            record_id = self.extract_record_id()
+
+            if not record_id:
+                msg = "What days?"
+                menu_title="Select the days:",
+                menu_buttons = [
+                    MenuButton("Monday to Friday", "record_id|0-1-2-3-4"),
+                    MenuButton("Saturday and Sunday", "record_id|5-6"),
+                    MenuButton("Let Me Pick", "record_id|let_me_pick"),
+                ]
+
+            else: #default
+                msg = "What days?"
+                menu_title="Select:",
+                menu_buttons = [
+                    MenuButton("Monday", "record_id|0"),
+                    MenuButton("Tuesday", "record_id|1"),
+                    MenuButton("Wednesday", "record_id|2"),
+                    MenuButton("Thursday", "record_id|3"),
+                    MenuButton("Friday", "record_id|4"),
+                    MenuButton("Saturday", "record_id|5"),
+                    MenuButton("Sunday", "record_id|6"),
+                ]
+
             return self.build_template(
                 case="no_repeat_day",
                 resp_type=self.RESP_SLOT,
                 slot="repeat_day",
                 text=msg,
-                menu_title="Select the days, or type a day:",
-                menu_buttons=[
-                    MenuButton("Monday through Friday", "monday, tuesday, wednesday, thursday, friday"),
-                    MenuButton("Saturday and Sunday", "saturday, sunday"),
-                    MenuButton("Let Me Pick", "let_me_pick"),
-                ]
+                menu_title=menu_title,
+                menu_buttons=menu_buttons
             )
 
 
