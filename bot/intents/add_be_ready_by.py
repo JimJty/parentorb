@@ -1,3 +1,5 @@
+import datetime
+
 from base import Intent as BaseIntent, MenuButton
 import time
 
@@ -142,6 +144,9 @@ class Intent(BaseIntent):
         #no_date
         if not is_repeated and not self.slot_value('date'):
 
+            today = self.user.local_time().strftime("%Y-%m-%d")
+            tomorrow = (self.user.local_time() + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+
             msg = ""
             return self.build_template(
                 case="no_date",
@@ -150,8 +155,8 @@ class Intent(BaseIntent):
                 text=msg,
                 menu_title="Select, or type a date:",
                 menu_buttons=[
-                    MenuButton("Today", "once"),
-                    MenuButton("Tomorrow", "repeated"),
+                    MenuButton("Today", today),
+                    MenuButton("Tomorrow", tomorrow),
                 ]
             )
 
