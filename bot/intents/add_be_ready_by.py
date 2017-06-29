@@ -88,6 +88,7 @@ class Intent(BaseIntent):
 
         #no_slot_time
         if not self.slot_value('time'):
+            self.increment_attempt('time')
 
             msg = "What time?"
             if self.slot_attempt('time') > 1:
