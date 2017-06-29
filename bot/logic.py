@@ -52,10 +52,12 @@ def route_logic(event):
             email = EmailMessage(subject, msg, settings.SERVER_EMAIL, (settings.SERVER_EMAIL,))
             email.send()
 
-        except Exception:
-            pass
+            raise
 
-        raise
+        except Exception, inst:
+            logger.error("log issue:%s", inst)
+
+
 
 
 
