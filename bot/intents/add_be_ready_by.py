@@ -30,16 +30,16 @@ class Intent(BaseIntent):
             )
 
         #missing_timezone
-        if self.user.time_offset is None:
-            return self.build_template(
-                case="missing_timezone",
-                resp_type=self.RESP_CLOSE,
-                text="You need to setup your account up first.",
-                menu_title="You can:",
-                menu_buttons=[
-                    MenuButton("Setup Account", "Setup Account"),
-                ]
-            )
+        # if self.user.time_offset is None:
+        #     return self.build_template(
+        #         case="missing_timezone",
+        #         resp_type=self.RESP_CLOSE,
+        #         text="You need to setup your account up first.",
+        #         menu_title="You can:",
+        #         menu_buttons=[
+        #             MenuButton("Setup Account", "Setup Account"),
+        #         ]
+        #     )
 
         #no_slot_child
         if not self.slot_value('child'):
