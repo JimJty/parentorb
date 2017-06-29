@@ -170,9 +170,12 @@ class Intent(BaseIntent):
             )
 
         #no_repeat_day
-        elif is_repeated and not self.session_value('repeat_days') and self.current_slot == 'repeat_day':
+        elif is_repeated and not self.session_value('repeat_days'):
 
-            record_id = self.extract_record_id()
+            if self.current_slot == 'repeat_day':
+                record_id = self.extract_record_id()
+            else:
+                record_id = None
 
             if not record_id:
                 msg = "What days?"
