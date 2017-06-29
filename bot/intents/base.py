@@ -75,6 +75,7 @@ class Intent:
         if resp_type == self.RESP_SLOT:
             resp["dialogAction"]["slotToElicit"] = slot
             resp["dialogAction"]["intentName"] = self.intent
+            resp["dialogAction"]["slots"] = self.slots
 
         if text:
             resp["dialogAction"]['message'] = {
