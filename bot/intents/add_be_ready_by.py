@@ -86,7 +86,7 @@ class Intent(BaseIntent):
         if not self.slot_value('time'):
 
             msg = "What time?"
-            if self.attempt_count > 0:
+            if self.attempt_count > 1:
                 msg = "Hmm, what time?, enter something like 7:00am."
 
             return self.build_template(
