@@ -32,6 +32,7 @@ class Test(TestCase):
             "phone_number": None,
             "code": None,
             "child": None,
+            "schedule_type": None,
         }
 
     def tearDown(self):

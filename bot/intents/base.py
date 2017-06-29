@@ -45,9 +45,17 @@ class Intent:
 
         return self.slots.get(key_name, None)
 
+    def set_slot_value(self,key_name, value):
+
+        self.slots[key_name] = value
+
     def session_value(self, key_name):
 
         return self.session.get(key_name, None)
+
+    def set_session_value(self,key_name, value):
+
+        self.session[key_name] = value
 
     def build_template(self, case, resp_type, slot=None, text=None, menu_title=None, menu_buttons=None, fulfilled=False):
 
