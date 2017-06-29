@@ -176,7 +176,7 @@ class Intent(BaseIntent):
             return self.build_template(
                 case="no_repeat_day",
                 resp_type=self.RESP_SLOT,
-                slot="repeat_date",
+                slot="repeat_day",
                 text=msg,
                 menu_title="Select the days, or type a day:",
                 menu_buttons=[
