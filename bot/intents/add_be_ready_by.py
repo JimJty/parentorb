@@ -117,14 +117,44 @@ class Intent(BaseIntent):
         #no_schedule_type
         if not self.slot_value('schedule_type'):
 
-            msg = "Just once, or repeat?"
+            msg = "How often?"
 
             return self.build_template(
                 case="no_schedule_type",
                 resp_type=self.RESP_SLOT,
                 slot="schedule_type",
                 text=msg,
+                menu_title="Select:",
+                menu_buttons=[
+                    MenuButton("Once", "once"),
+                    MenuButton("Repeated", "repeated"),
+                ]
             )
+
+        #set is_repeated
+        if self.session_value('is_repeated') is None:
+            if self.slot_value('schedule_type').lower() in ('repeat','repeated'):
+                self.set_session_value('is_repeated',"1")
+            else:
+                self.set_session_value('is_repeated',"0")
+        is_repeated = self.session_value('is_repeated') == "1"
+
+        #no_date
+        if not is_repeated and not self.slot_value('date'):
+
+            msg = ""
+            return self.build_template(
+                case="no_date",
+                resp_type=self.RESP_SLOT,
+                slot="date",
+                text=msg,
+                menu_title="Select, or type a date:",
+                menu_buttons=[
+                    MenuButton("Today", "once"),
+                    MenuButton("Tomorrow", "repeated"),
+                ]
+            )
+
 
         # #get the child id
         # if not self.session_value('child_id'):
