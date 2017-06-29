@@ -72,14 +72,26 @@ class Intent:
 
         return "record_id|%s" % value
 
+    def increment_attempt(self, slot):
+        key_name="slot_attempt_%s" % slot
+        current_count = self.session_value(key_name) or 0
+        current_count += 1
+        self.set_session_value(key_name,current_count)
+
+    def slot_attempt(self, slot):
+        key_name="slot_attempt_%s" % slot
+        return int(self.session_value(key_name) or '0')
+
     def build_template(self, case, resp_type, slot=None, text=None, menu_title=None, menu_buttons=None, fulfilled=False):
 
-        if self.last_case != case:
-            self.attempt_count = 0
-        else:
-            self.attempt_count = self.attempt_count
+        # if self.last_case != case:
+        #     self.attempt_count = 0
+        #
+        # self.session["attempt_count"] = self.attempt_count
 
-        self.session["attempt_count"] = self.attempt_count
+        if slot:
+            self.increment_attempt(slot)
+
         self.session["last_case"] = case
 
         resp = {
