@@ -19,7 +19,6 @@ class Intent:
         self.input = None
         self.user_id = None
         self.user = None
-        self.attempt_count = 0
         self.last_case = None
         self.current_slot = None
 
