@@ -92,6 +92,8 @@ class AppUser(models.Model):
 
         child.save()
 
+        return child
+
     def get_children(self):
 
         children = self.children.all().order_by('first_name','id')
@@ -144,6 +146,15 @@ class AppUser(models.Model):
             return children[0]
 
         return None
+
+    def get_child_by_id(self, child_id):
+
+        child = self.children.filter(id=child_id)
+        if child.count() == 1:
+            return child[0]
+
+        return None
+
 
 class Child(models.Model):
 

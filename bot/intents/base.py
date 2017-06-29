@@ -59,6 +59,17 @@ class Intent:
 
         self.session[key_name] = value
 
+    def extract_record_id(self):
+
+        if self.input and self.input.startswith("record_id|"):
+            return self.input.split("record_id|")[1]
+
+        return None
+
+    def inject_record_id(self, value):
+
+        return "record_id|%s" % value
+
     def build_template(self, case, resp_type, slot=None, text=None, menu_title=None, menu_buttons=None, fulfilled=False):
 
         if self.last_case != case:
