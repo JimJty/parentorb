@@ -21,6 +21,7 @@ class Intent:
         self.user = None
         self.attempt_count = 0
         self.last_case = None
+        self.current_slot = None
 
     def setup(self, event):
 
@@ -33,6 +34,7 @@ class Intent:
         self.user_id = event.get("userId", None)
         self.attempt_count = int(self.session_value('attempt_count') or '0') or 1
         self.last_case = self.session_value('last_case')
+        self.current_slot = self.session_value('current_slot')
 
         self.user = None
         if self.user_id:
@@ -84,6 +86,9 @@ class Intent:
             resp["dialogAction"]["slotToElicit"] = slot
             resp["dialogAction"]["intentName"] = self.intent
             resp["dialogAction"]["slots"] = self.slots
+            self.set_session_value("current_slot",slot)
+        else:
+            self.set_session_value("current_slot",None)
 
         if text:
             resp["dialogAction"]['message'] = {
