@@ -75,7 +75,7 @@ class Intent:
         current_count += 1
         self.set_session_value(key_name,current_count)
 
-    def slot_attempt(self, slot):
+    def attempt_count(self, slot):
         key_name="attempt_%s" % slot
         return int(self.session_value(key_name) or '0')
 

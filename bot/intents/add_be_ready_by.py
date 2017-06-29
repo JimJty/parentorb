@@ -90,14 +90,27 @@ class Intent(BaseIntent):
         if not self.slot_value('time'):
             self.increment_attempt('time')
 
-            msg = "What time?"
-            if self.slot_attempt('time') > 1:
-                msg = "Hmm, what time?, enter something like 7:00am."
+            msg = "What time do you want %s to be ready?" % self.slot_value('child')
+
+            if self.attempt_count('time') > 1:
+                msg = "What time?, be more more specific, like 7:30am."
 
             return self.build_template(
                 case="no_slot_time",
                 resp_type=self.RESP_SLOT,
                 slot="time",
+                text=msg,
+            )
+
+        #no_event
+        if not self.slot_value('event'):
+
+            msg = "Why does %s need to be ready?" % self.slot_value('child')
+
+            return self.build_template(
+                case="no_event",
+                resp_type=self.RESP_SLOT,
+                slot="event",
                 text=msg,
             )
 
