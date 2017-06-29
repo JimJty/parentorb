@@ -40,13 +40,16 @@ class Test(TestCase):
         AppUser.objects.all().delete()
 
 
-    def _build_test_event(self, intent, slots, transcript, session=None, invocation=None, confirmation=None):
+    def _build_test_event(self, intent, slots, transcript=None, session=None, invocation=None, confirmation=None):
 
         if not invocation:
             invocation = "DialogCodeHook"
 
         if not confirmation:
             confirmation = "None"
+
+        if not transcript:
+            transcript = "-"
 
         event = dict(
             userId = "testid",
@@ -80,8 +83,9 @@ class Test(TestCase):
             "add be ready by"
         )
 
+        resp = route_logic(event)
 
-        self._test_intent_case(event,"missing_child")
+        self._test_intent_case(resp,"missing_child")
 
     def test_missing_timezone(self):
 
@@ -96,11 +100,26 @@ class Test(TestCase):
             "add be ready by"
         )
 
-        self._test_intent_case(event,"missing_timezone")
+        resp = route_logic(event)
 
-    def _test_intent_case(self, event, case_name):
+        self._test_intent_case(resp,"missing_timezone")
+
+    def test_no_slot_child(self):
+
+        user = AppUser.setup("testid")
+        user.add_child("Jane","555")
+
+        event = self._build_test_event(
+            intent="AddBeReadyBy",
+            slots=self.slots,
+        )
 
         resp = route_logic(event)
+
+        self._test_intent_case(resp,"no_slot_child")
+
+
+    def _test_intent_case(self, resp, case_name):
 
         self.assertEquals(resp.get("sessionAttributes",{}).get('last_case',None), case_name)
 

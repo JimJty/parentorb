@@ -19,6 +19,8 @@ class Intent:
         self.input = None
         self.user_id = None
         self.user = None
+        self.attempt_count = 0
+        self.last_case = None
 
     def setup(self, event):
 
@@ -29,6 +31,8 @@ class Intent:
         self.confirmation = event.get("currentIntent").get("confirmationStatus")
         self.input = event.get("inputTranscript", None)
         self.user_id = event.get("userId", None)
+        self.attempt_count = self.session_value('attempt_count') or 1
+        self.last_case = self.session_value('last_case')
 
         self.user = None
         if self.user_id:
@@ -41,8 +45,18 @@ class Intent:
 
         return self.slots.get(key_name, None)
 
-    def build_template(self, case, resp_type, text=None, menu_title=None, menu_buttons=None):
+    def session_value(self, key_name):
 
+        return self.session.get(key_name, None)
+
+    def build_template(self, case, resp_type, slot=None, text=None, menu_title=None, menu_buttons=None, fulfilled=False):
+
+        if self.last_case != case:
+            self.attempt_count = 1
+        else:
+            self.attempt_count += 1
+
+        self.session["attempt_count"] = self.attempt_count
         self.session["last_case"] = case
 
         resp = {
@@ -52,14 +66,24 @@ class Intent:
             "sessionAttributes": self.session,
         }
 
+        if resp_type == self.RESP_CLOSE:
+            if fulfilled:
+                resp["dialogAction"]["fulfillmentState"] = "Fulfilled"
+            else:
+                resp["dialogAction"]["fulfillmentState"] = "Failed"
+
+        if resp_type == self.RESP_SLOT:
+            resp["dialogAction"]["slotToElicit"] = slot
+            resp["dialogAction"]["intentName"] = self.intent
+
         if text:
-            resp['message'] = {
+            resp["dialogAction"]['message'] = {
                 "contentType": "PlainText",
                 "content": text
             }
 
         if menu_title and menu_buttons:
-             resp['responseCard'] = {
+             resp["dialogAction"]['responseCard'] = {
                 "version": 1,
                 "contentType": "application/vnd.amazonaws.card.generic",
                 "genericAttachments": [

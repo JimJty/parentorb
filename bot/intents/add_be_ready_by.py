@@ -20,11 +20,11 @@ class Intent(BaseIntent):
         if child_count == 0:
 
             return self.build_template(
-                "missing_child",
-                self.RESP_CLOSE,
-                "You haven't added any children yet.",
-                "You can:",
-                [
+                case="missing_child",
+                resp_type=self.RESP_CLOSE,
+                text="You haven't added any children yet.",
+                menu_title="You can:",
+                menu_buttons=[
                     MenuButton("Add Child", "Add Child"),
                 ]
             )
@@ -32,11 +32,11 @@ class Intent(BaseIntent):
         #missing_timezone
         if self.user.time_offset is None:
             return self.build_template(
-                "missing_timezone",
-                self.RESP_CLOSE,
-                "You need to setup your account up first.",
-                "You can:",
-                [
+                case="missing_timezone",
+                resp_type=self.RESP_CLOSE,
+                text="You need to setup your account up first.",
+                menu_title="You can:",
+                menu_buttons=[
                     MenuButton("Setup Account", "Setup Account"),
                 ]
             )
@@ -45,15 +45,17 @@ class Intent(BaseIntent):
         if not self.slot_value('child'):
 
             children = self.user.get_children()
+            buttons = []
+            for c in children:
+                buttons.append(MenuButton(c.first_name,c.first_name))
 
             return self.build_template(
-                "no_slot_child",
-                self.RESP_SLOT,
-                "For who?",
-                "You can:",
-                [
-                    MenuButton("Setup Account", "Setup Account"),
-                ]
+                case="no_slot_child",
+                resp_type=self.RESP_SLOT,
+                slot="child",
+                text="For who?",
+                menu_title="Select:",
+                menu_buttons=buttons,
             )
 
         #child_not_found
