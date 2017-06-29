@@ -85,6 +85,9 @@ class Intent:
 
     def build_template(self, case, resp_type, slot=None, text=None, menu_title=None, menu_buttons=None, fulfilled=False):
 
+        if self.current_slot:
+            self.increment_attempt(slot)
+
         self.session["last_case"] = case
 
         resp = {
