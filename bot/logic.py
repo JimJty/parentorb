@@ -22,19 +22,28 @@ MAX_CHILDREN = 5
 def route_logic(event):
     logger.info("Event: %s", json.dumps(event, indent=4))
 
-    intent = event.get("currentIntent", {}).get("name", None)
+    try:
+        intent = event.get("currentIntent", {}).get("name", None)
 
-    intent_obj = init_intent(intent)
+        intent_obj = init_intent(intent)
 
-    if intent == "AddChild":
-        result = handle_add_child(event)
-    elif intent_obj:
-        result = intent_obj.handle(event)
-    else:
-        result = Intent.resp_generic(event)
+        if intent == "AddChild":
+            result = handle_add_child(event)
+        elif intent_obj:
+            result = intent_obj.handle(event)
+        else:
+            result = Intent.resp_generic(event)
 
-    logger.info("Result: %s", json.dumps(result, indent=4))
-    return result
+        logger.info("Result: %s", json.dumps(result, indent=4))
+        return result
+
+    except Exception, inst:
+
+        print "exception j"
+        raise inst
+
+
+
 
 
 def get_unhandled_resp(event):

@@ -10,6 +10,4 @@ def handler(event, context):
 
     return route_logic(event)
 
-def handle_exception(e, event, context):
 
-    print "exceptionj", e

@@ -26,7 +26,6 @@
     "exclude": [
       "client"
     ],
-    "exception_handler": "bot_app.handle_exception",
     "apigateway_enabled": false,
     "callbacks": {
       "post": "zappa_callbacks.set_lex_permission_dev"
