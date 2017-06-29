@@ -5,6 +5,10 @@ from core.models import AppUser
 
 class Intent:
 
+    RESP_SLOT = "ElicitSlot"
+    RESP_INTENT = "ElicitIntent"
+    RESP_CLOSE = "Close"
+
     def __init__(self):
 
         self.intent = None
@@ -36,6 +40,49 @@ class Intent:
     def slot_value(self,key_name):
 
         return self.slots.get(key_name, None)
+
+    def build_template(self, case, resp_type, text=None, menu_title=None, menu_buttons=None):
+
+        self.session["last_case"] = case
+
+        resp = {
+            "dialogAction": {
+                "type": resp_type,
+            },
+            "sessionAttributes": self.session,
+        }
+
+        if text:
+            resp['message'] = {
+                "contentType": "PlainText",
+                "content": text
+            }
+
+        if menu_title and menu_buttons:
+             resp['responseCard'] = {
+                "version": 1,
+                "contentType": "application/vnd.amazonaws.card.generic",
+                "genericAttachments": [
+                    {
+                        "title": menu_title,
+                        "buttons": self._build_menu_buttons(menu_buttons),
+                    }
+                ]
+            }
+
+        return resp
+
+    @staticmethod
+    def _build_menu_buttons(buttons):
+        template = []
+        for b in buttons:
+            template.append(
+                {
+                    "text": b.text,
+                    "value": b.value,
+                }
+            )
+        return template
 
     @staticmethod
     def resp_generic(event):
@@ -81,3 +128,10 @@ class Intent:
         else:
             return Intent.resp_generic(event)
 
+
+class MenuButton(object):
+
+    def __init__(self, text, value):
+
+        self.text = text
+        self.value = value

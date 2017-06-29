@@ -1,9 +1,15 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from datetime import timedelta, datetime
+import time
+
+import pytz
+from dateutil.tz import tzoffset, tzutc
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models, IntegrityError
+from django.utils import timezone
 from django_pgjsonb import JSONField
 import logging
 
@@ -21,6 +27,7 @@ class AppUser(models.Model):
     email = models.CharField(max_length=200, blank=True, null=True, db_index=True)
     first_name = models.CharField(max_length=200, blank=True, null=True)
     last_name = models.CharField(max_length=200, blank=True, null=True)
+    time_offset = models.IntegerField(default=None, blank=True, null=True)
 
     custom_data = JSONField(null=False, blank=False, default=json_default, db_index=True)
 
@@ -31,9 +38,13 @@ class AppUser(models.Model):
     @staticmethod
     def setup(ref_id):
 
+        if not ref_id:
+            return None
+
         try:
             user = AppUser.objects.get(ref_id=ref_id)
-            return user
+            if user.edit_date > timezone.now() - timedelta(days=1):
+                return user
 
         except ObjectDoesNotExist:
             user = AppUser()
@@ -53,6 +64,9 @@ class AppUser(models.Model):
             user.last_name = profile.get('last_name', None)
             user.custom_data['facebook_data'] = profile
 
+            if profile.get('timezone',None):
+                user.time_offset = profile.get('timezone')
+
         try:
             user.save()
 
@@ -69,6 +83,8 @@ class AppUser(models.Model):
 
         if not first_name:
             first_name = "Child"
+
+        first_name = first_name.strip()
 
         child.user = self
         child.first_name = first_name
@@ -87,6 +103,47 @@ class AppUser(models.Model):
         reminders = Reminder.objects.filter(child__user=self)
 
         return reminders
+
+    def local_time(self):
+
+        if not self.time_offset:
+            return None
+
+        local_time = timezone.now().astimezone(tzoffset(None, self.time_offset*60*60))
+
+        return local_time
+
+    def relevant_server_time(self, local_time_part):
+
+        if not self.time_offset:
+            return None
+
+        try:
+            time.strptime(local_time_part, '%H:%M')
+        except ValueError:
+            return False
+
+        now_local_date = self.local_time().strftime("%Y-%m-%d")
+
+        local_time = datetime.strptime(now_local_date + " " + local_time_part, "%Y-%m-%d %H:%M" )
+
+        server_time = local_time + timedelta(hours=self.time_offset*-1)
+
+        return pytz.utc.localize(server_time)
+
+    def get_child_by_name(self, name):
+
+        if not name:
+            return None
+
+        name = name.strip()
+
+        children = self.children.filter(first_name__iexact=name)
+
+        if children.count() == 1:
+            return children[0]
+
+        return None
 
 class Child(models.Model):
 

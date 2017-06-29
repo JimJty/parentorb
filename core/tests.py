@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from datetime import timedelta
+
 from django.test import TestCase
+from django.utils import timezone
 from mock import mock
 
 from core.fb_api_wrapper import FacebookException
@@ -58,3 +61,24 @@ class TestAppUser(TestCase):
         user2 = AppUser.setup("testid")
 
         self.assertEquals(user2.id, user.id)
+
+    @mock.patch('core.fb_api_wrapper.Messenger.get_profile')
+    def test_timezone(self, get_profile):
+
+        facebook_data = {
+            "profile_pic": "https://scontent.xx.fbcdn.net/v/t1.0-1/387900_111423898972930_532477064_n.jpg?oh=b0a2ee0279851025f4cdecfbbbf7d30c&oe=59DDB290",
+            "first_name": "Johnny",
+            "last_name": "Tester",
+            "locale": "en_US",
+            "gender": "male",
+            "timezone": -7,
+            "is_payment_enabled": True
+        }
+
+        get_profile.return_value= facebook_data
+
+        user = AppUser.setup("testid")
+
+        self.assertNotEquals(user.local_time(),None)
+
+        print user.relevant_server_time("17:30")

@@ -33,7 +33,7 @@ def route_logic(event):
     else:
         result = Intent.resp_generic(event)
 
-    logging.info("Result: %s", json.dumps(result, indent=4))
+    logger.info("Result: %s", json.dumps(result, indent=4))
     return result
 
 
