@@ -107,7 +107,7 @@ class Intent(BaseIntent):
         #no_event
         if not self.slot_value('event'):
 
-            msg = "Why does %s need to be ready?" % self.slot_value('child')
+            msg = "What does %s need to be ready for?" % self.slot_value('child')
 
             return self.build_template(
                 case="no_event",
@@ -141,13 +141,22 @@ class Intent(BaseIntent):
                 self.set_session_value('is_repeated',"0")
         is_repeated = self.session_value('is_repeated') == "1"
 
+
+        #check if date is valid
+        if not is_repeated and self.slot_value('date'):
+            try:
+                datetime.datetime.strptime(self.slot_value('date')[:10], "%Y-%m-%d")
+            except ValueError:
+                self.set_slot_value('date', None)
+
+
         #no_date
         if not is_repeated and not self.slot_value('date'):
 
             today = self.user.local_time().strftime("%Y-%m-%d")
             tomorrow = (self.user.local_time() + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
 
-            msg = ""
+            msg = "What day?"
             return self.build_template(
                 case="no_date",
                 resp_type=self.RESP_SLOT,
@@ -157,6 +166,23 @@ class Intent(BaseIntent):
                 menu_buttons=[
                     MenuButton("Today", today),
                     MenuButton("Tomorrow", tomorrow),
+                ]
+            )
+
+        #no_repeat_day
+        elif is_repeated and not self.session_value('repeat_days'):
+
+            msg = "What days do you want to repeat on?"
+            return self.build_template(
+                case="no_repeat_day",
+                resp_type=self.RESP_SLOT,
+                slot="repeat_date",
+                text=msg,
+                menu_title="Select the days, or type a day:",
+                menu_buttons=[
+                    MenuButton("Monday through Friday", "monday, tuesday, wednesday, thursday, friday"),
+                    MenuButton("Saturday and Sunday", "saturday, sunday"),
+                    MenuButton("Let Me Pick", "let_me_pick"),
                 ]
             )
 
