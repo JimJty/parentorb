@@ -39,15 +39,22 @@ def route_logic(event):
         logger.info("Result: %s", json.dumps(result, indent=4))
         return result
 
-    except Exception, inst:
+    except Exception:
 
-        #log exception
-        subject = 'ParentOrb Bot Exception'
-        msg = "An exception occurred: %s" % timezone.now()
-        msg += "\n\n%s" % traceback.format_exc()
+        try:
+            #log exception
+            subject = 'ParentOrb Bot Exception'
+            msg = "An exception occurred: %s" % timezone.now()
+            msg += "\n\n%s" % traceback.format_exc()
 
-        email = EmailMessage(subject, msg, settings.SERVER_EMAIL, (settings.SERVER_EMAIL,))
-        email.send()
+            msg += "\n\n%s" % event
+
+            email = EmailMessage(subject, msg, settings.SERVER_EMAIL, (settings.SERVER_EMAIL,))
+            email.send()
+
+        except Exception:
+            pass
+
         raise
 
 
