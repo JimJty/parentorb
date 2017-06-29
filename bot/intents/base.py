@@ -31,7 +31,7 @@ class Intent:
         self.confirmation = event.get("currentIntent").get("confirmationStatus")
         self.input = event.get("inputTranscript", None)
         self.user_id = event.get("userId", None)
-        self.attempt_count = self.session_value('attempt_count') or 1
+        self.attempt_count = int(self.session_value('attempt_count')) or 1
         self.last_case = self.session_value('last_case')
 
         self.user = None
