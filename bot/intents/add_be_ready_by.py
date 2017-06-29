@@ -179,7 +179,7 @@ class Intent(BaseIntent):
 
             if not record_id:
                 msg = "What days?"
-                menu_title="Select the days:",
+                menu_title="Select the days:"
                 menu_buttons = [
                     MenuButton("Monday to Friday", "record_id|0-1-2-3-4"),
                     MenuButton("Saturday and Sunday", "record_id|5-6"),
@@ -188,7 +188,7 @@ class Intent(BaseIntent):
 
             else: #default
                 msg = "What days?"
-                menu_title="Select:",
+                menu_title="Select:"
                 menu_buttons = [
                     MenuButton("Monday", "record_id|0"),
                     MenuButton("Tuesday", "record_id|1"),
