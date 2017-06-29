@@ -32,7 +32,6 @@ class Intent:
         self.confirmation = event.get("currentIntent").get("confirmationStatus")
         self.input = event.get("inputTranscript", None)
         self.user_id = event.get("userId", None)
-        self.attempt_count = int(self.session_value('attempt_count') or '0') or 0
         self.last_case = self.session_value('last_case')
         self.current_slot = self.session_value('current_slot')
 
@@ -40,7 +39,9 @@ class Intent:
         if self.user_id:
             self.user = AppUser.setup(self.user_id)
 
-        self.attempt_count += 1
+        if self.current_slot:
+            self.increment_attempt(self.current_slot)
+
 
     def reset_session(self):
         self.session = {}
@@ -83,11 +84,6 @@ class Intent:
         return int(self.session_value(key_name) or '0')
 
     def build_template(self, case, resp_type, slot=None, text=None, menu_title=None, menu_buttons=None, fulfilled=False):
-
-        # if self.last_case != case:
-        #     self.attempt_count = 0
-        #
-        # self.session["attempt_count"] = self.attempt_count
 
         if slot:
             self.increment_attempt(slot)
