@@ -3,10 +3,12 @@ import importlib
 import json
 import random
 import re
+import traceback
 
 import requests
 from django.conf import settings
 from django.core.mail import EmailMessage
+from django.utils import timezone
 from twilio.base.exceptions import TwilioRestException
 from twilio.rest import Client
 
@@ -39,8 +41,14 @@ def route_logic(event):
 
     except Exception, inst:
 
-        print "exception j"
-        raise inst
+        #log exception
+        subject = 'ParentOrb Bot Exception'
+        msg = "An exception occured: %s" % timezone.now()
+        msg += "\n\n%s" % traceback.format_exc()
+
+        email = EmailMessage(subject, msg, settings.SERVER_EMAIL, settings.SERVER_EMAIL)
+        email.send()
+        raise
 
 
 
