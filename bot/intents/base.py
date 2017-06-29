@@ -74,7 +74,7 @@ class Intent:
 
     def increment_attempt(self, slot):
         key_name="slot_attempt_%s" % slot
-        current_count = self.session_value(key_name) or 0
+        current_count = int(self.session_value(key_name) or '0')
         current_count += 1
         self.set_session_value(key_name,current_count)
 
