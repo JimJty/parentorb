@@ -15,6 +15,10 @@ class Intent(BaseIntent):
         # confirmation
         # all good
 
+        #some preinit
+        if not self.slot_value('child'):
+            self.reset_session()
+
         #missing_child
         child_count = self.user.get_children().count()
         if child_count == 0:
