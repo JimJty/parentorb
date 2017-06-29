@@ -9,6 +9,8 @@ class Intent:
     RESP_INTENT = "ElicitIntent"
     RESP_CLOSE = "Close"
 
+    DAY_MON = "0"
+
     def __init__(self):
 
         self.intent = None

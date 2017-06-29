@@ -114,6 +114,18 @@ class Intent(BaseIntent):
                 text=msg,
             )
 
+        #no_schedule_type
+        if not self.slot_value('schedule_type'):
+
+            msg = "Just once, or repeat?"
+
+            return self.build_template(
+                case="no_schedule_type",
+                resp_type=self.RESP_SLOT,
+                slot="schedule_type",
+                text=msg,
+            )
+
         # #get the child id
         # if not self.session_value('child_id'):
         #
