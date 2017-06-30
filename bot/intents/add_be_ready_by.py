@@ -193,10 +193,10 @@ class Intent(BaseIntent):
                     MenuButton("Monday", "record_id|0"),
                     MenuButton("Tuesday", "record_id|1"),
                     MenuButton("Wednesday", "record_id|2"),
-                    MenuButton("Thursday", "record_id|3"),
-                    MenuButton("Friday", "record_id|4"),
-                    MenuButton("Saturday", "record_id|5"),
-                    MenuButton("Sunday", "record_id|6"),
+                    # MenuButton("Thursday", "record_id|3"),
+                    # MenuButton("Friday", "record_id|4"),
+                    # MenuButton("Saturday", "record_id|5"),
+                    # MenuButton("Sunday", "record_id|6"),
                 ]
 
             return self.build_template(
