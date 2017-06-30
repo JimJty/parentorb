@@ -160,7 +160,7 @@ class AppUser(models.Model):
         self.get_child_by_id(child_id)
 
         if not is_repeated:
-            one_time = datetime.strptime("%s %s" % (choosen_date, reminder_time), "%Y-%m-%dT%H:%M")
+            one_time = datetime.strptime("%sT%s" % (choosen_date, reminder_time), "%Y-%m-%dT%H:%M")
             days_selected = None
             reminder_time = None
         else:
