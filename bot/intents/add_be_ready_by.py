@@ -187,8 +187,8 @@ class Intent(BaseIntent):
                 ]
 
             else: #default
-                msg = "Keep submitting days, or:"
-                menu_title= "-"
+                msg = "Type a day and submit."
+                menu_title= "Days Selected: Mon, Tues, Wed, Thur, Fri, Sat Sun"
                 menu_buttons = [
                     MenuButton("I'm Done", "record_id|day_select_done"),
                 ]
