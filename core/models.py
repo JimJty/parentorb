@@ -161,6 +161,7 @@ class AppUser(models.Model):
 
         if not is_repeated:
             one_time = datetime.strptime("%sT%s" % (choosen_date, reminder_time), "%Y-%m-%dT%H:%M")
+            one_time = self.relevant_server_time(one_time)
             days_selected = None
             reminder_time = None
         else:
