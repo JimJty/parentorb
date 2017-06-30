@@ -155,6 +155,31 @@ class AppUser(models.Model):
 
         return None
 
+    def add_reminder(self, child_id, kind, for_desc, is_repeated, choosen_date, reminder_time, days_selected):
+
+        self.get_child_by_id(child_id)
+
+        if not is_repeated:
+            one_time = datetime.strptime("%s %s" % (choosen_date, reminder_time), "%Y-%m-%dT%H:%M")
+            days_selected = None
+            reminder_time = None
+        else:
+            one_time = None
+            days_selected = '|'.join(sorted(days_selected.split('|'))) #reorder
+
+        reminder = Reminder()
+        reminder.child_id = child_id
+        reminder.kind = kind
+        reminder.for_desc = for_desc
+        reminder.one_time = one_time
+        reminder.repeat_at_time = reminder_time
+        reminder.repeat_days = days_selected
+        reminder.active = True
+        reminder.save()
+
+
+
+
 
 class Child(models.Model):
 
@@ -178,15 +203,13 @@ class Reminder(models.Model):
     )
     kind = models.IntegerField(choices = KIND_CHOICES, blank=False, null=False)
 
-    at_time = models.TimeField(blank=False, null=False)
+    for_desc = models.CharField(max_length=100, blank=True, null=True)
 
-    on_mon = models.BooleanField(default=False, null=False)
-    on_tue = models.BooleanField(default=False, null=False)
-    on_wed = models.BooleanField(default=False, null=False)
-    on_thu = models.BooleanField(default=False, null=False)
-    on_fri = models.BooleanField(default=False, null=False)
-    on_sat = models.BooleanField(default=False, null=False)
-    on_sun = models.BooleanField(default=False, null=False)
+    one_time = models.DateTimeField(blank=True, null=True)
+
+    repeat_at_time = models.TimeField(blank=True, null=True)
+
+    repeat_days = models.CharField(max_length=100, blank=True, null=True)
 
     active = models.BooleanField(default=True, null=False)
 

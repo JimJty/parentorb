@@ -223,6 +223,30 @@ class Intent(BaseIntent):
                     menu_buttons=menu_buttons
                 )
 
+        #complete
+        if self.session_value('child_id') \
+                and self.slot_value('event') \
+                and self.slot_value('date') \
+                and self.slot_value('time'):
+
+            self.user.add_reminder(
+                child_id = self.session_value('child_id'),
+                kind = 100,
+                for_desc = self.slot_value('event'),
+                is_repeated = is_repeated,
+                choosen_date = self.slot_value('date'),
+                reminder_time = self.slot_value('time'),
+                days_selected = self.session_value('repeat_days'),
+            )
+
+            self.reset_session()
+
+            return self.build_template(
+                case="complete",
+                resp_type=self.RESP_CLOSE,
+                fulfilled = True,
+                text="Your reminder has been saved!",
+            )
 
     def _handle_day_selection(self):
 
@@ -265,7 +289,7 @@ class Intent(BaseIntent):
         msg = "Type a day and submit."
 
         if not pending_day_codes:
-            menu_title= "Days Selected: -"
+            menu_title= "Days Submitted: -"
         else:
             selected_days = []
             for d in sorted(pending_day_codes):
@@ -284,7 +308,7 @@ class Intent(BaseIntent):
                 elif d == "6":
                     selected_days.append("Sun")
 
-            menu_title = "Days Selected: " +  ",".join(selected_days)
+            menu_title = "Days Submitted: " +  ", ".join(selected_days)
 
         menu_buttons = [
             MenuButton("I'm Done", "record_id|day_select_done"),
