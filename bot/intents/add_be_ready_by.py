@@ -128,7 +128,7 @@ class Intent(BaseIntent):
                 text=msg,
                 menu_title="Select:",
                 menu_buttons=[
-                    MenuButton("Once", "once"),
+                    MenuButton("Just Once", "once"),
                     MenuButton("Repeated", "repeated"),
                 ]
             )
@@ -177,49 +177,103 @@ class Intent(BaseIntent):
             else:
                 record_id = None
 
+            msg = None
+            menu_title = None
+            menu_buttons = None
+
             if not record_id:
                 msg = "What days?"
                 menu_title="Select the days:"
                 menu_buttons = [
-                    MenuButton("Monday to Friday", "record_id|0-1-2-3-4"),
-                    MenuButton("Saturday and Sunday", "record_id|5-6"),
+                    MenuButton("Monday to Friday", "record_id|weekdays"),
+                    MenuButton("Every Day", "record_id|everyday"),
                     MenuButton("Let Me Pick", "record_id|let_me_pick"),
                 ]
 
-            else: #default
-                msg = "Type a day and submit."
-                menu_title= "Days Selected: Mon, Tues, Wed, Thur, Fri, Sat Sun"
+            elif record_id == "weekdays":
+                self.set_session_value('repeat_days',"0|1|2|3|4")
+
+            elif record_id == "everyday":
+                self.set_session_value('repeat_days',"0|1|2|3|4|5|6")
+
+            elif record_id == "day_select_done" and not self.session_value('pending_repeat_days'):
+                msg = "No days selected, type a day and submit."
+                menu_title= "Days Selected: -"
                 menu_buttons = [
                     MenuButton("I'm Done", "record_id|day_select_done"),
                 ]
 
-            return self.build_template(
-                case="no_repeat_day",
-                resp_type=self.RESP_SLOT,
-                slot="repeat_day",
-                text=msg,
-                menu_title=menu_title,
-                menu_buttons=menu_buttons
-            )
+            elif record_id == "day_select_done" and self.session_value('pending_repeat_days'):
+                self.set_session_value('repeat_days',self.session_value('pending_repeat_days'))
+
+            else: #default loop
+
+                msg, menu_title, menu_buttons = self._handle_day_selection()
 
 
-        # #get the child id
-        # if not self.session_value('child_id'):
-        #
-        #
-        #     child = self.user.get_child_by_name(self.slot_value('child'))
-        #     self.set_session_value('child_id', child.id)
-        #
-        # #no_slot_time
-        # if not self.slot_value('time'):
-        #
-        #     return self.build_template(
-        #         case="no_slot_time",
-        #         resp_type=self.RESP_SLOT,
-        #         slot="child",
-        #         text="What time?",
-        #     )
+            #do a final check to see if day selection is done
+            if msg and not self.session_value('repeat_days'):
 
+                return self.build_template(
+                    case="no_repeat_day",
+                    resp_type=self.RESP_SLOT,
+                    slot="repeat_day",
+                    text=msg,
+                    menu_title=menu_title,
+                    menu_buttons=menu_buttons
+                )
+
+
+    def _handle_day_selection(self):
+
+        pending_day_codes = []
+        if self.session_value('pending_repeat_days'):
+            pending_day_codes = self.session_value('pending_repeat_days').split("|")
+
+        typed_day = self.slot_value('repeat_day')
+
+        typed_day_code = None
+
+        if typed_day:
+            typed_day = typed_day.strip().lower()
+
+            typed_day_code = None
+            if typed_day in ('mon','monday'):
+                typed_day_code = '0'
+            elif typed_day in ('tue','tuesday'):
+                typed_day_code = '1'
+            elif typed_day in ('wed','wednesday'):
+                typed_day_code = '2'
+            elif typed_day in ('thur','thursday'):
+                typed_day_code = '3'
+            elif typed_day in ('fri','friday'):
+                typed_day_code = '4'
+            elif typed_day in ('sat','saturday'):
+                typed_day_code = '5'
+            elif typed_day in ('sun','sunday'):
+                typed_day_code = '6'
+
+            if typed_day_code is not None and typed_day_code not in pending_day_codes:
+
+                pending_day_codes.append(typed_day_code)
+
+        if pending_day_codes:
+            self.set_session_value('pending_repeat_days','|'.join(pending_day_codes))
+        else:
+            self.set_session_value('pending_repeat_days', None)
+
+        msg = "Type a day and submit."
+
+        if not pending_day_codes:
+            menu_title= "Days Selected: -"
+        else:
+            menu_title = "picking"
+
+        menu_buttons = [
+            MenuButton("I'm Done", "record_id|day_select_done"),
+        ]
+
+        return msg, menu_title, menu_buttons
 
 
 
