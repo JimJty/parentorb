@@ -115,7 +115,7 @@ class AppUser(models.Model):
 
         return local_time
 
-    def relevant_server_time(self, local_time_part):
+    def relevant_server_time(self, local_time_part, local_date_part=None):
 
         if not self.time_offset:
             return None
@@ -125,9 +125,10 @@ class AppUser(models.Model):
         except ValueError:
             return False
 
-        now_local_date = self.local_time().strftime("%Y-%m-%d")
+        if not local_date_part:
+            local_date_part = self.local_time().strftime("%Y-%m-%d")
 
-        local_time = datetime.strptime(now_local_date + " " + local_time_part, "%Y-%m-%d %H:%M" )
+        local_time = datetime.strptime(local_date_part + " " + local_time_part, "%Y-%m-%d %H:%M" )
 
         server_time = local_time + timedelta(hours=self.time_offset*-1)
 
@@ -160,8 +161,7 @@ class AppUser(models.Model):
         self.get_child_by_id(child_id)
 
         if not is_repeated:
-            one_time = datetime.strptime("%sT%s" % (choosen_date, reminder_time), "%Y-%m-%dT%H:%M")
-            one_time = self.relevant_server_time(one_time)
+            one_time =  self.relevant_server_time(reminder_time, choosen_date)
             days_selected = None
             reminder_time = None
         else:
