@@ -181,7 +181,7 @@ class Intent(BaseIntent):
             menu_title = None
             menu_buttons = None
 
-            if not record_id:
+            if not record_id and not self.slot_value('repeat_day'):
                 msg = "What days?"
                 menu_title="Select the days:"
                 menu_buttons = [
