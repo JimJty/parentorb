@@ -19,7 +19,7 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 
-MAX_CHILDREN = 5
+MAX_CHILDREN = 3
 
 def route_logic(event):
     logger.info("Event: %s", json.dumps(event, indent=4))

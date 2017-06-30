@@ -184,13 +184,14 @@ class Intent(BaseIntent):
                     MenuButton("Monday to Friday", "record_id|0-1-2-3-4"),
                     MenuButton("Saturday and Sunday", "record_id|5-6"),
                     MenuButton("Let Me Pick", "record_id|let_me_pick"),
-                    MenuButton("yeah one more", "record_id|yeah"),
                 ]
 
             else: #default
-                msg = "Type a day one at a time:"
-                menu_title= None
-                menu_buttons = None
+                msg = "Keep submitting days, or:"
+                menu_title= "-"
+                menu_buttons = [
+                    MenuButton("I'm Done", "record_id|day_select_done"),
+                ]
 
             return self.build_template(
                 case="no_repeat_day",
