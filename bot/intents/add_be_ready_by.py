@@ -267,7 +267,24 @@ class Intent(BaseIntent):
         if not pending_day_codes:
             menu_title= "Days Selected: -"
         else:
-            menu_title = "picking"
+            selected_days = []
+            for d in sorted(pending_day_codes):
+                if d == "0":
+                    selected_days.append("Mon")
+                elif d == "1":
+                    selected_days.append("Tue")
+                elif d == "2":
+                    selected_days.append("Wed")
+                elif d == "3":
+                    selected_days.append("Thur")
+                elif d == "4":
+                    selected_days.append("Fri")
+                elif d == "5":
+                    selected_days.append("Sat")
+                elif d == "6":
+                    selected_days.append("Sun")
+
+            menu_title = "Days Selected: " +  ",".join(selected_days)
 
         menu_buttons = [
             MenuButton("I'm Done", "record_id|day_select_done"),
