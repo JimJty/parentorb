@@ -8,7 +8,7 @@ import pytz
 from dateutil.tz import tzoffset, tzutc
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
-from django.db import models, IntegrityError
+from django.db import models, IntegrityError, transaction
 from django.utils import timezone
 from django_pgjsonb import JSONField
 import logging
@@ -123,7 +123,7 @@ class AppUser(models.Model):
         try:
             time.strptime(local_time_part, '%H:%M')
         except ValueError:
-            return False
+            return None
 
         if not local_date_part:
             local_date_part = self.local_time().strftime("%Y-%m-%d")
@@ -176,7 +176,43 @@ class AppUser(models.Model):
         reminder.repeat_at_time = reminder_time
         reminder.repeat_days = days_selected
         reminder.active = True
-        reminder.save()
+
+        with transaction.atomic():
+
+            reminder.save()
+            self.schedule_actions()
+
+    def schedule_actions(self):
+
+         for r in Reminder.objects.filter(child__user=self):
+
+            if r.one_time:
+                Action.schedule_for_user(self.id, r.id, r.one_time)
+            else:
+                next_eight_days = []
+                now = timezone.now()
+                now_local = self.local_time()
+                server_start_date = self.relevant_server_time(r.repeat_at_time.strftime("%H:%M"), now_local.strftime("%Y-%m-%d"))
+
+                for i in range(0,8):
+                    next_eight_days.append(server_start_date + timedelta(days=i))
+
+                relevant_days = []
+                relevant_days_of_week = r.repeat_days.split('|')
+                days_of_week_added = {}
+
+                for d in next_eight_days:
+                    if str(d.weekday()) in relevant_days_of_week \
+                        and d > now \
+                        and str(d.weekday()) not in days_of_week_added.keys():
+                            relevant_days.append(d)
+                            days_of_week_added[str(d.weekday())] = True
+
+                #now schedule the days
+                for d in relevant_days:
+                   Action.schedule_for_user(self.id, r.id, d)
+
+
 
 
 
@@ -216,12 +252,64 @@ class Reminder(models.Model):
     add_date = models.DateTimeField(blank=False, auto_now_add=True)
     edit_date = models.DateTimeField(blank=False, auto_now=True)
 
+
+
+class Action(models.Model):
+
+    slug = models.CharField(max_length=100, blank=False, null=False, unique=True)
+    reminder = models.ForeignKey(Reminder, null=False, blank=False, related_name="actions")
+
+    STATUS_CHOICES = (
+        (100, 'Scheduled 1st Request'),
+        (200, 'Sent 1st Request'),
+        (300, 'Scheduled 2nd Request'),
+        (400, 'Sent 2nd Request'),
+        (500, 'Awaiting Response'),
+        (600, 'Incomplete'),
+        (700, 'Complete'),
+    )
+
+    status = models.IntegerField(choices = STATUS_CHOICES, blank=False, null=False)
+    scheduled_time = models.DateTimeField(blank=False, null=False)
+
+    request_count = models.IntegerField(default=0, blank=False, null=False)
+
+
+    add_date = models.DateTimeField(blank=False, auto_now_add=True)
+    edit_date = models.DateTimeField(blank=False, auto_now=True)
+
+    def send_request(self):
+
+        pass
+
+    def handle_response(self):
+
+        pass
+
     @staticmethod
-    def schedule(user=None):
+    def gen_slug(user_id, reminder_id, schedule_time):
 
-        #one timers
-        to_sched = None
+        slug = "s_%s_%s_%s" % (
+            user_id,
+            reminder_id,
+            schedule_time.strftime("%Y-%m-%dT%H:%M")
+        )
 
+        return slug
 
-        #repeated
-        # every run it schedules for the next 7 days
+    @staticmethod
+    def schedule_for_user(user_id, reminder_id, schedule_time, skip_check=False):
+
+        slug = Action.gen_slug(user_id, reminder_id, schedule_time)
+
+        try:
+            action = Action.objects.get(slug=slug)
+        except ObjectDoesNotExist:
+            action = Action()
+
+        action.slug = slug
+        action.reminder_id = reminder_id
+        action.status = 100
+        action.scheduled_time = schedule_time
+
+        action.save()

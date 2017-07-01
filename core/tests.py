@@ -5,10 +5,10 @@ from datetime import timedelta
 
 from django.test import TestCase
 from django.utils import timezone
-from mock import mock
+from mock import mock, patch
 
 from core.fb_api_wrapper import FacebookException
-from core.models import AppUser, Child
+from core.models import AppUser, Child, Action, Reminder
 
 
 class TestAppUser(TestCase):
@@ -82,3 +82,62 @@ class TestAppUser(TestCase):
         self.assertNotEquals(user.local_time(),None)
 
         print user.relevant_server_time("17:30")
+
+
+class TestActions(TestCase):
+
+    def setUp(self):
+
+        facebook_data = {
+            "profile_pic": "mypic.jpg",
+            "first_name": "Johnny",
+            "last_name": "Tester",
+            "locale": "en_US",
+            "gender": "male",
+            "timezone": -7,
+            "is_payment_enabled": True
+        }
+
+        self.patcher = patch('core.fb_api_wrapper.Messenger.get_profile', return_value=facebook_data)
+        self.patcher.start()
+
+    def tearDown(self):
+        self.patcher.stop()
+
+        AppUser.objects.all().delete()
+
+    def test_add_action(self):
+
+        user = AppUser.setup("test_id")
+
+        child = user.add_child("Jill", "555")
+
+        user.add_reminder(
+            child_id = child.id,
+            kind = 100,
+            for_desc = 'brand practice',
+            is_repeated = False,
+            choosen_date = "2017-08-01",
+            reminder_time = "16:30",
+            days_selected = None
+        )
+
+        user.add_reminder(
+            child_id = child.id,
+            kind = 100,
+            for_desc = 'brand practice',
+            is_repeated = True,
+            choosen_date = None,
+            reminder_time = "16:30",
+            days_selected = '0|1|2|5'
+        )
+
+        user.schedule_actions()
+
+        self.assertEquals(Action.objects.all().count(),5)
+
+        user.schedule_actions()
+
+        self.assertEquals(Action.objects.all().count(),5)
+
+
