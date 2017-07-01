@@ -181,7 +181,6 @@ class AppUser(models.Model):
 
 
 
-
 class Child(models.Model):
 
     user = models.ForeignKey(AppUser, null=False, blank=False, related_name="children")
@@ -217,4 +216,12 @@ class Reminder(models.Model):
     add_date = models.DateTimeField(blank=False, auto_now_add=True)
     edit_date = models.DateTimeField(blank=False, auto_now=True)
 
+    @staticmethod
+    def schedule(user=None):
 
+        #one timers
+        to_sched = None
+
+
+        #repeated
+        # every run it schedules for the next 7 days

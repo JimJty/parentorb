@@ -226,7 +226,6 @@ class Intent(BaseIntent):
         #complete
         if self.session_value('child_id') \
                 and self.slot_value('event') \
-                and self.slot_value('date') \
                 and self.slot_value('time'):
 
             self.user.add_reminder(
