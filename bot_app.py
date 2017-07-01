@@ -22,6 +22,7 @@ def handler(event, context):
     elif event.get('command', None):
         whole_function = event['command']
         extra_args = whole_function.split(' ')[1:]
+        whole_function = whole_function.split(' ')[0]
         app_function = import_module_and_get_function(whole_function)
         result = run_function(app_function, event, context, extra_args)
         print("Result of %s:" % whole_function)
