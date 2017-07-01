@@ -107,12 +107,15 @@ class AppUser(models.Model):
 
         return reminders
 
-    def local_time(self):
+    def local_time(self, server_time=None):
 
         if not self.time_offset:
             return None
 
-        local_time = timezone.now().astimezone(tzoffset(None, self.time_offset*60*60))
+        if not server_time:
+            server_time = timezone.now()
+
+        local_time = server_time.astimezone(tzoffset(None, self.time_offset*60*60))
 
         return local_time
 
@@ -188,7 +191,7 @@ class AppUser(models.Model):
          for r in Reminder.objects.filter(child__user=self):
 
             if r.one_time:
-                Action.schedule_for_user(self.id, r.id, r.one_time)
+                Action.schedule_for_user(self.id, r.id, r.schedule_time(r.one_time), r.one_time, )
             else:
                 next_eight_days = []
                 now = timezone.now()
@@ -211,10 +214,7 @@ class AppUser(models.Model):
 
                 #now schedule the days
                 for d in relevant_days:
-                   Action.schedule_for_user(self.id, r.id, d)
-
-
-
+                   Action.schedule_for_user(self.id, r.id, r.schedule_time(d), d)
 
 
 
@@ -230,6 +230,8 @@ class Child(models.Model):
 
 
 class Reminder(models.Model):
+
+    DEFAULT_SCHEDULE_MINUTES = 15
 
     child = models.ForeignKey(Child, null=False, blank=False, related_name="reminders")
 
@@ -253,7 +255,9 @@ class Reminder(models.Model):
     add_date = models.DateTimeField(blank=False, auto_now_add=True)
     edit_date = models.DateTimeField(blank=False, auto_now=True)
 
+    def schedule_time(self, event_time):
 
+        return event_time - timedelta(minutes=self.DEFAULT_SCHEDULE_MINUTES)
 
 class Action(models.Model):
 
@@ -272,6 +276,7 @@ class Action(models.Model):
 
     status = models.IntegerField(choices = STATUS_CHOICES, blank=False, null=False)
     scheduled_time = models.DateTimeField(blank=False, null=False)
+    event_time = models.DateTimeField(blank=False, null=False)
 
     request_count = models.IntegerField(default=0, blank=False, null=False)
 
@@ -279,17 +284,35 @@ class Action(models.Model):
     add_date = models.DateTimeField(blank=False, auto_now_add=True)
     edit_date = models.DateTimeField(blank=False, auto_now=True)
 
+    def minutes_until(self):
+
+        minutes, seconds = divmod((self.event_time - timezone.now()).total_seconds(), 60)
+
+        if minutes <=0 :
+            return None
+
+        return int(minutes) + 1
+
+
     def process(self):
 
         if self.status == 100:
 
+            minutes_until = self.minutes_until()
+
             if self.reminder.kind == 100:
-                msg = "Hello %s, Dad wants you to be ready for band practice in 15 minutes (4:45pm)\nAre you ready?"
+                msg = "Hello %s, PARENT_NAME wants you to be ready for %s in %s minutes (%s). Are you ready?" % (
+                    self.reminder.child.first_name,
+                    self.reminder.for_desc,
+                    self.minutes_until(),
+                    self.reminder.child.user.local_time(self.event_time).strftime('%I:%M %p')
+                )
             else:
                 raise Exception("kind_not_handled")
 
             client = Client(settings.TWILIO_ACCOUNT, settings.TWILIO_KEY)
             sms = client.messages.create(to=self.reminder.child.phone_number, from_=settings.TWILIO_FROM_NUMBER, body=msg)
+
 
     @staticmethod
     def process_by_id(action_id):
@@ -314,7 +337,7 @@ class Action(models.Model):
         return slug
 
     @staticmethod
-    def schedule_for_user(user_id, reminder_id, schedule_time, skip_check=False):
+    def schedule_for_user(user_id, reminder_id, schedule_time, event_time, skip_check=False):
 
         slug = Action.gen_slug(user_id, reminder_id, schedule_time)
 
@@ -327,5 +350,6 @@ class Action(models.Model):
         action.reminder_id = reminder_id
         action.status = 100
         action.scheduled_time = schedule_time
+        action.event_time = event_time
 
         action.save()

@@ -101,8 +101,12 @@ class TestActions(TestCase):
         self.patcher = patch('core.fb_api_wrapper.Messenger.get_profile', return_value=facebook_data)
         self.patcher.start()
 
+        self.patcher2 = patch('twilio.rest.Client.messages')
+        self.patcher2.start()
+
     def tearDown(self):
         self.patcher.stop()
+        self.patcher2.stop()
 
         AppUser.objects.all().delete()
 
@@ -141,3 +145,24 @@ class TestActions(TestCase):
         self.assertEquals(Action.objects.all().count(),5)
 
 
+    def test_process(self):
+
+        user = AppUser.setup("test_id")
+
+        child = user.add_child("Jill", "555")
+
+        user.add_reminder(
+            child_id = child.id,
+            kind = 100,
+            for_desc = 'brand practice',
+            is_repeated = False,
+            choosen_date = "2017-08-01",
+            reminder_time = "16:30",
+            days_selected = None
+        )
+
+        user.schedule_actions()
+
+        action = Action.objects.all()[0]
+
+        action.process()
