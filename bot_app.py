@@ -21,8 +21,9 @@ def handler(event, context):
             return run_function(app_function, event, context)
     elif event.get('command', None):
         whole_function = event['command']
+        extra_args = whole_function.split(' ')[1:]
         app_function = import_module_and_get_function(whole_function)
-        result = run_function(app_function, event, context)
+        result = run_function(app_function, event, context, extra_args)
         print("Result of %s:" % whole_function)
         print(result)
         return result
@@ -43,14 +44,16 @@ def import_module_and_get_function(whole_function):
     app_function = getattr(app_module, function)
     return app_function
 
-def run_function(app_function, event, context):
+def run_function(app_function, event, context, extra_args=None):
     """
     Given a function and event context,
     detect signature and execute, returning any result.
     """
     args, varargs, keywords, defaults = inspect.getargspec(app_function)
     num_args = len(args)
-    if num_args == 0:
+    if extra_args:
+        result = app_function(*extra_args)
+    elif num_args == 0:
         result = app_function(event, context) if varargs else app_function()
     elif num_args == 1:
         result = app_function(event, context) if varargs else app_function(event)
