@@ -283,7 +283,11 @@ class Action(models.Model):
 
         if self.status == 100:
 
-            msg = "Hello!"
+            if self.reminder.kind == 100:
+                msg = "Hello %s, Dad wants you to be ready for band practice in 15 minutes (4:45pm)\nAre you ready?"
+            else:
+                raise Exception("kind_not_handled")
+
             client = Client(settings.TWILIO_ACCOUNT, settings.TWILIO_KEY)
             sms = client.messages.create(to=self.reminder.child.phone_number, from_=settings.TWILIO_FROM_NUMBER, body=msg)
 
