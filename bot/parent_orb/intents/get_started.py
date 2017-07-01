@@ -1,4 +1,4 @@
-from base import Intent as BaseIntent
+from bot.base_intent import Intent as BaseIntent
 
 
 class Intent(BaseIntent):

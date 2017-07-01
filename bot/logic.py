@@ -1,20 +1,20 @@
 import hashlib
 import importlib
 import json
+import logging
 import random
 import re
 import traceback
 
-import requests
 from django.conf import settings
 from django.core.mail import EmailMessage
 from django.utils import timezone
 from twilio.base.exceptions import TwilioRestException
 from twilio.rest import Client
 
-from bot.intents.base import Intent
+from bot.base_intent import Intent
 from core.models import AppUser
-import logging
+
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
@@ -26,8 +26,9 @@ def route_logic(event):
 
     try:
         intent = event.get("currentIntent", {}).get("name", None)
+        bot_name = event.get("bot", {}).get("name", None)
 
-        intent_obj = init_intent(intent)
+        intent_obj = init_intent(intent, bot_name)
 
         if intent == "AddChild":
             result = handle_add_child(event)
@@ -55,10 +56,6 @@ def route_logic(event):
         email.send()
 
         raise
-
-
-
-
 
 
 
@@ -278,15 +275,16 @@ def handle_add_child(event):
 
 #helpers
 
-def init_intent(intent_name):
+def init_intent(intent_name, bot_name):
 
     if not intent_name:
         return None
 
     intent_name = convert_camelcase(intent_name)
+    bot_name = convert_camelcase(bot_name)
 
     try:
-        module = importlib.import_module("bot.intents.%s" % intent_name)
+        module = importlib.import_module("bot.%s.intents.%s" % (bot_name,intent_name))
         cls = getattr(module, 'Intent')
 
         obj = cls()

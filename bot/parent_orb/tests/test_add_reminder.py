@@ -16,7 +16,7 @@ class Test(TestCase):
 
     def _load_event(self, event_name):
 
-        event = open("bot/test_events/%s.json" % event_name,"rb")
+        event = open("bot/parent_orb/test_events/%s.json" % event_name,"rb")
         event = json.loads(event.read())
         return event
 

@@ -1,7 +1,8 @@
 import datetime
-
-from base import Intent as BaseIntent, MenuButton
 import time
+
+from bot.base_intent import Intent as BaseIntent, MenuButton
+
 
 class Intent(BaseIntent):
 

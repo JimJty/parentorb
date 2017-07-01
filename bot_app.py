@@ -10,7 +10,7 @@ from bot.logic import route_logic
 
 def handler(event, context):
 
-    #for manual commands
+    #for manual commands, taken from zappa
     if event.get('detail-type') == u'Scheduled Event':
         whole_function = event['resources'][0].split('/')[-1].split('-')[-1]
 
