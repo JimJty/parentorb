@@ -13,6 +13,7 @@ from django.utils import timezone
 from django_pgjsonb import JSONField
 import logging
 
+from twilio.rest import Client
 
 from core.fb_api_wrapper import Messenger, FacebookException
 
@@ -278,9 +279,20 @@ class Action(models.Model):
     add_date = models.DateTimeField(blank=False, auto_now_add=True)
     edit_date = models.DateTimeField(blank=False, auto_now=True)
 
-    def send_request(self):
+    def process(self):
 
-        pass
+        if self.status == 100:
+
+            msg = "Hello!"
+            client = Client(settings.TWILIO_ACCOUNT, settings.TWILIO_KEY)
+            sms = client.messages.create(to=self.reminder.child.phone_number, from_=settings.TWILIO_FROM_NUMBER, body=msg)
+
+    @staticmethod
+    def process_by_id(action_id):
+
+        action = Action.objects.get(id=action_id)
+        action.process()
+
 
     def handle_response(self):
 
