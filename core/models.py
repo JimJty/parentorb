@@ -80,6 +80,15 @@ class AppUser(models.Model):
 
     def add_child(self, first_name, phone_number):
 
+        if not first_name:
+            first_name = "Child"
+
+        child = Child.get_by_phone(phone_number)
+        if child:
+            child.first_name = first_name
+            child.save()
+            return child
+
         child = Child()
 
         if not first_name:
@@ -223,10 +232,31 @@ class Child(models.Model):
     user = models.ForeignKey(AppUser, null=False, blank=False, related_name="children")
 
     first_name = models.CharField(max_length=200, blank=True, null=True)
-    phone_number = models.CharField(max_length=200, blank=True, null=True)
+    phone_number = models.CharField(max_length=100, blank=False, null=False, unique=True)
 
     add_date = models.DateTimeField(blank=False, auto_now_add=True)
     edit_date = models.DateTimeField(blank=False, auto_now=True)
+
+    @staticmethod
+    def get_by_phone(phone):
+        if not phone.startswith("+"):
+            phone = "+" + phone
+
+        children = Child.objects.filter(phone_number=phone)
+
+        if children.count() == 0:
+            return None
+        else:
+            return children[0]
+
+    def get_active_reminder(self):
+
+        actions = Action.objects.filter(reminders__child=self, status=500).order_by('event_time')
+
+        if actions.count() > 0:
+            return actions[0]
+        else:
+            return None
 
 
 class Reminder(models.Model):
@@ -339,7 +369,7 @@ class Action(models.Model):
     @staticmethod
     def schedule_for_user(user_id, reminder_id, schedule_time, event_time, skip_check=False):
 
-        slug = Action.gen_slug(user_id, reminder_id, schedule_time)
+        slug = Action.gen_slug(user_id, reminder_id, event_time)
 
         try:
             action = Action.objects.get(slug=slug)

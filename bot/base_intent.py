@@ -38,10 +38,13 @@ class Intent:
 
         self.user = None
         if self.user_id:
-            self.user = AppUser.setup(self.user_id)
+            self.user = self.get_user()
 
     def reset_session(self):
         self.session = {}
+
+    def get_user(self):
+         return AppUser.setup(self.user_id)
 
     def slot_value(self,key_name):
 
