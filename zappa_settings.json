@@ -17,6 +17,11 @@
         "sg-267daf57"
       ]
     }
+//    ,
+//    "events": [{
+//        "function": "bot.tasks.process_action", // The function to execute
+//        "expression": "rate(1 minute)" // When to execute it (in cron or rate format)
+//    }]
   },
   "devbot": {
     "aws_region": "us-east-1",
@@ -40,3 +45,4 @@
     }
   }
 }
+
