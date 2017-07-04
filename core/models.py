@@ -393,19 +393,29 @@ class Action(models.Model):
     def process(self):
 
         sms_client = Client(settings.TWILIO_ACCOUNT, settings.TWILIO_KEY)
+        msg = None
 
-        if self.status == 100:
+        if self.reminder.kind == 100:
 
-            if self.reminder.kind == 100:
+            if self.status == 100:
                 msg = "Hello %s, PARENT_NAME wants you to be ready for %s in %s minutes (%s). Are you ready?" % (
                     self.reminder.child.first_name,
                     self.reminder.for_desc,
                     self.minutes_until(),
                     time_part(self.reminder.child.user.local_time(self.event_time))
                 )
-            else:
-                raise Exception("kind_not_handled")
 
+            elif self.status == 300:
+                msg = "You need to be ready for %s in %s minutes! Are you ready?" % (
+                    self.reminder.for_desc,
+                    self.minutes_until(),
+                )
+
+        else:
+            raise Exception("kind_not_handled")
+
+
+        if msg:
             sms_client.messages.create(to=self.reminder.child.phone_number, from_=settings.TWILIO_FROM_NUMBER, body=msg)
 
             self.status = 500
