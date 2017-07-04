@@ -108,6 +108,10 @@ class Intent:
             resp["dialogAction"]["intentName"] = self.intent
             resp["dialogAction"]["slots"] = self.slots
             self.set_session_value("current_slot",slot)
+        if resp_type == self.RESP_CONFIRM:
+            resp["dialogAction"]["intentName"] = self.intent
+            resp["dialogAction"]["slots"] = self.slots
+            self.set_session_value("current_slot",slot)
         else:
             self.set_session_value("current_slot",None)
 
