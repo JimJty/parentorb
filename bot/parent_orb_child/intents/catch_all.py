@@ -77,7 +77,7 @@ class Intent(BaseIntent):
                     text=self.action.reminder.resp_negative(is_final),
                 )
 
-            elif self.session_value("need_excuse") and not self.session_value("excuse"):
+            elif self.slot_value("more_info") and not self.session_value("excuse"):
 
                 excuse = self.input.strip()[:200]
                 self.action.handle_child_resp(False, excuse)
