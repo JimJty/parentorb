@@ -35,21 +35,18 @@ class Intent(BaseIntent):
 
         #no_action_default
         if not self.action:
-            # return self.build_template(
-            #     case="no_action_default",
-            #     resp_type=self.RESP_CLOSE,
-            #     text="Here's what you have coming up:",
-            # )
-            # return self.build_template(
-            #     case="no_action_default",
-            #     text="Send picture",
-            #     resp_type="ElicitIntent",
-            # )
+
+            upcoming = self.child.get_upcoming()
+            if upcoming:
+                msg = "Upcoming:\n %s" % "\n".join(upcoming)
+            else:
+                msg = "You're good, no upcoming events."
+
             return self.build_template(
-                case="no_slot_child",
-                resp_type=self.RESP_SLOT,
-                slot="photo",
-                text="Send picture",
+                case="no_action_default",
+                resp_type=self.RESP_CLOSE,
+                text=msg,
             )
+
 
 

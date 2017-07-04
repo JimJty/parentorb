@@ -1,5 +1,7 @@
 import re
 
+from django.test import TestCase
+
 from core.models import AppUser
 
 
@@ -191,3 +193,44 @@ class MenuButton(object):
 
         self.text = text
         self.value = value
+
+
+class BaseIntentTest(TestCase):
+
+    def build_test_event(self, bot, intent, slots, transcript=None, session=None, invocation=None, confirmation=None, userId=None):
+
+        if not invocation:
+            invocation = "DialogCodeHook"
+
+        if not confirmation:
+            confirmation = "None"
+
+        if not transcript:
+            transcript = "-"
+
+        event = dict(
+            userId = userId or "testid",
+            inputTranscript = transcript,
+            invocationSource = invocation,
+            outputDialogMode = "Text",
+            messageVersion = "1.0",
+            sessionAttributes = session
+        )
+
+        event["currentIntent"] =  {
+            "slots": slots,
+            "name": intent,
+            "confirmationStatus": confirmation
+        }
+
+        event["bot"] = {
+            "alias": None,
+            "version": "$LATEST",
+            "name": bot
+        }
+
+        return event
+
+    def check_intent_case(self, resp, case_name):
+
+        self.assertEquals(resp.get("sessionAttributes",{}).get('last_case',None), case_name)

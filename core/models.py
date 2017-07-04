@@ -258,6 +258,22 @@ class Child(models.Model):
         else:
             return None
 
+    def get_upcoming(self):
+
+        upcoming = []
+
+        future_date = timezone.now() + timedelta(days=8)
+
+        reminders_present = []
+
+        actions = Action.objects.filter(reminder__child=self, add_date__lte=future_date).order_by('add_date')
+        for a in actions:
+            if a.reminder_id not in reminders_present:
+                upcoming.append(a.child_display())
+                reminders_present.append(a.reminder_id)
+
+        return upcoming
+
 
 class Reminder(models.Model):
 
@@ -323,26 +339,48 @@ class Action(models.Model):
 
         return int(minutes) + 1
 
+    def child_display(self):
+
+
+        local_time_now = self.reminder.child.user.local_time()
+        local_time_tomorrow = local_time_now + timedelta(days=1)
+        local_time_event = self.reminder.child.user.local_time(self.event_time)
+
+        if local_time_now.strftime("%Y-%m-%d") ==  local_time_event.strftime("%Y-%m-%d"):
+            date_part = "Today"
+        elif local_time_tomorrow.strftime("%Y-%m-%d") ==  local_time_event.strftime("%Y-%m-%d"):
+            date_part = "Tomorrow"
+        else:
+            date_part = "on %s %s" % (local_time_event.strftime("%b"), get_ordinal(local_time_event.strftime("%d")))
+
+        msg = "%s at %s %s" % (
+            self.reminder.for_desc,
+            time_part(local_time_event),
+            date_part,
+        )
+
+        return msg
 
     def process(self):
 
-        if self.status == 100:
+        sms_client = Client(settings.TWILIO_ACCOUNT, settings.TWILIO_KEY)
 
-            minutes_until = self.minutes_until()
+        if self.status == 100:
 
             if self.reminder.kind == 100:
                 msg = "Hello %s, PARENT_NAME wants you to be ready for %s in %s minutes (%s). Are you ready?" % (
                     self.reminder.child.first_name,
                     self.reminder.for_desc,
                     self.minutes_until(),
-                    self.reminder.child.user.local_time(self.event_time).strftime('%I:%M %p')
+                    time_part(self.reminder.child.user.local_time(self.event_time))
                 )
             else:
                 raise Exception("kind_not_handled")
 
-            client = Client(settings.TWILIO_ACCOUNT, settings.TWILIO_KEY)
-            sms = client.messages.create(to=self.reminder.child.phone_number, from_=settings.TWILIO_FROM_NUMBER, body=msg)
+            sms_client.messages.create(to=self.reminder.child.phone_number, from_=settings.TWILIO_FROM_NUMBER, body=msg)
 
+            self.status = 500
+            self.save()
 
     @staticmethod
     def process_by_id(action_id):
@@ -383,3 +421,24 @@ class Action(models.Model):
         action.event_time = event_time
 
         action.save()
+
+#helper funcitons
+
+def get_ordinal(day):
+
+    day = int(day)
+
+    if 4 <= day <= 20 or 24 <= day <= 30:
+        suffix = "th"
+    else:
+        suffix = ["st", "nd", "rd"][day % 10 - 1]
+
+    return "%s%s" % (day,suffix)
+
+def time_part(date_value):
+
+    return "%s:%s%s" % (
+        int(date_value.strftime("%I")),
+        date_value.strftime("%M"),
+        date_value.strftime("%p").lower(),
+    )
