@@ -41,12 +41,17 @@ class Intent(BaseIntent):
             msg = ""
             if upcoming or past:
                 if upcoming:
-                    msg += "Upcoming:\n%s" % "\n - ".join(upcoming)
+                    msg = "Upcoming:"
+                    for u in upcoming:
+                        msg += "\n * %s" % u
                 else:
-                    msg += "Upcoming:\nNothing Yet"
+                    msg += "Upcoming:\n * Nothing Yet"
 
                 if past:
-                    msg += "\nPast:\n%s" % "\n - ".join(past)
+                    msg = "\nRecent:"
+                    for p in past:
+                        msg += "\n * %s" % p
+
 
             else:
                 msg = "You're good, no upcoming events."
