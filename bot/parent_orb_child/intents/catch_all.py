@@ -19,7 +19,7 @@ class Intent(BaseIntent):
             self.action = self.child.get_active_reminder()
 
         if self.child:
-            return AppUser.setup(self.child.user_id)
+            return AppUser.setup(self.child.user.ref_id)
         else:
             return None
 
