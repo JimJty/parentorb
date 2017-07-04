@@ -64,16 +64,15 @@ def handle_twilio(request):
                 "photo_url": photo_url,
             }
 
-        print msg_request, settings.CHILD_BOT_NAME, settings.CHILD_BOT_ALIAS, user_id, session
         resp = lex_client.post_text(
             botName=settings.CHILD_BOT_NAME,
-            botAlias="latest",
+            botAlias=settings.CHILD_BOT_ALIAS,
             userId=user_id,
             sessionAttributes=session,
             inputText=msg_request
         )
 
-        print resp
+        #print resp
         resp_message = resp.get("message", None)
         resp_state = resp.get("dialogState", None)
         resp_session = resp.get("sessionAttributes",None)
@@ -81,13 +80,13 @@ def handle_twilio(request):
         if resp_message and resp_state == "ElicitIntent" and not resp_session:
             resp = lex_client.post_text(
                 botName=settings.CHILD_BOT_NAME,
-                botAlias="latest",
+                botAlias=settings.CHILD_BOT_ALIAS,
                 userId=user_id,
                 sessionAttributes=session,
                 inputText="hello"
             )
 
-            print resp
+            #print resp
             resp_message = resp.get("message", None)
 
         if resp_message:
