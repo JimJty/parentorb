@@ -74,6 +74,20 @@ def handle_twilio(request):
 
         print resp
         resp_message = resp.get("message", None)
+        resp_state = resp.get("dialogState", None)
+
+        if resp_message and resp_state == "ElicitIntent":
+            resp = lex_client.post_text(
+                botName=settings.CHILD_BOT_NAME,
+                botAlias=settings.CHILD_BOT_ALIAS,
+                userId=user_id,
+                sessionAttributes=session,
+                inputText="hello"
+            )
+
+            print resp
+            resp_message = resp.get("message", None)
+
         if resp_message:
             smd_client = Client(settings.TWILIO_ACCOUNT, settings.TWILIO_KEY)
             sms = smd_client.messages.create(
