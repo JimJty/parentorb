@@ -228,7 +228,7 @@ class AppUser(models.Model):
     @staticmethod
     def get_users_to_schedule():
 
-        users = AppUser.objects.filter(children__reminders__one_time=None).order_by('id')
+        users = AppUser.objects.exclude(children__reminders__repeat_at_time=None).order_by('id')
         return users
 
 

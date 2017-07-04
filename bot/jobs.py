@@ -6,12 +6,6 @@ import logging
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-# def sample_job(action_id):
-#
-#     print "processing: %s" % action_id
-#
-#     #run(process_sub_task, (9,))
-
 
 
 def process_action(action_id):
