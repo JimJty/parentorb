@@ -52,6 +52,8 @@ def handle_twilio(request):
         if not user_id:
             raise Exception("missing_user_id")
 
+        user_id = user_id.replace("+","")
+
         msg = request.POST.get('Body', None)
         if not msg:
             raise Exception("missing_msg")

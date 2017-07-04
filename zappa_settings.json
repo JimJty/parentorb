@@ -16,7 +16,12 @@
       "SecurityGroupIds": [
         "sg-267daf57"
       ]
-    }
+    },
+    "extra_permissions": [{
+        "Effect": "Allow",
+        "Action": ["lex:PostText"],
+        "Resource": "*"
+    }]
   },
 
   "devbot": {
