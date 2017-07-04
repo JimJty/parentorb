@@ -10,6 +10,8 @@ from django.shortcuts import render
 
 import logging
 
+from django.views.decorators.csrf import csrf_exempt
+
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
@@ -21,6 +23,7 @@ def home(request):
 
     return render(request, 'front/home.html', context)
 
+@csrf_exempt
 def handle_twilio(request):
 
     print request.POST
