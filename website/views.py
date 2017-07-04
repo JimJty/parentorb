@@ -31,13 +31,43 @@ def handle_twilio(request):
     #validate
     validator = RequestValidator(settings.TWILIO_KEY)
 
-    print(validator.validate(
+    is_valid = validator.validate(
         request.build_absolute_uri(),
         request.POST,
-        request.META.get('HTTP_X_TWILIO_SIGNATURE', ''))
+        request.META.get('HTTP_X_TWILIO_SIGNATURE', '')
     )
 
     msg = None
+
+    if not is_valid:
+        msg = "invalid"
+
+    else:
+
+        print request.POST
+
+        lex_client = boto3.client('lex-runtime')
+
+        user_id = request.POST.get('From', None)
+        if not user_id:
+            raise Exception("missing_user_id")
+
+        msg = request.POST.get('Body', None)
+        if not msg:
+            raise Exception("missing_msg")
+
+        resp = lex_client.post_text(
+            botName=settings.CHILD_BOT_NAME,
+            botAlias=settings.CHILD_BOT_ALIAS,
+            userId=user_id,
+            # sessionAttributes={
+            #     'string': 'string'
+            # },
+            inputText=msg
+        )
+
+        print resp
+
 
     results = {'status':1 if not msg else 0,"msg":msg,}
 

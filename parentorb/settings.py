@@ -101,6 +101,9 @@ TWILIO_ACCOUNT = "DEV"
 TWILIO_KEY = "DEV"
 TWILIO_FROM_NUMBER = "DEV"
 
+CHILD_BOT_NAME="ParentOrbChild"
+CHILD_BOT_ALIAS="devchild"
+
 DEPLOY_ENV = 'DEV'
 
 # Password validation
