@@ -59,7 +59,7 @@ def handle_twilio(request):
             msg = "hello"
 
         photo_url = request.POST.get('MediaUrl0',None)
-        session = None
+        session = {}
         if photo_url:
             session = {
                 "photo_url": photo_url,
