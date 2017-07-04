@@ -75,8 +75,9 @@ def handle_twilio(request):
         print resp
         resp_message = resp.get("message", None)
         resp_state = resp.get("dialogState", None)
+        resp_metadata = resp.get("ResponseMetadata",None)
 
-        if resp_message and resp_state == "ElicitIntent":
+        if resp_message and resp_state == "ElicitIntent" and resp_metadata:
             resp = lex_client.post_text(
                 botName=settings.CHILD_BOT_NAME,
                 botAlias=settings.CHILD_BOT_ALIAS,
