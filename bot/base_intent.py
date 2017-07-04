@@ -10,6 +10,7 @@ class Intent:
     RESP_SLOT = "ElicitSlot"
     RESP_INTENT = "ElicitIntent"
     RESP_CLOSE = "Close"
+    RESP_CONFIRM = "ConfirmIntent"
 
     DAY_MON = "0"
 
