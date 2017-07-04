@@ -251,7 +251,7 @@ class Child(models.Model):
 
     def get_active_reminder(self):
 
-        actions = Action.objects.filter(reminders__child=self, status=500).order_by('event_time')
+        actions = Action.objects.filter(reminder__child=self, status=500).order_by('event_time')
 
         if actions.count() > 0:
             return actions[0]
