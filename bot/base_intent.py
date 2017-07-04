@@ -150,7 +150,7 @@ class Intent:
                 "type": "ElicitIntent",
                 "message": {
                     "contentType": "PlainText",
-                    "content": "I'm not sure what to do."
+                    "content": "I'm not sure what to do2."
                 },
                 "responseCard": {
                     "version": 1,
