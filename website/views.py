@@ -64,6 +64,7 @@ def handle_twilio(request):
                 "photo_url": photo_url,
             }
 
+        print msg_request
         resp = lex_client.post_text(
             botName=settings.CHILD_BOT_NAME,
             botAlias=settings.CHILD_BOT_ALIAS,
