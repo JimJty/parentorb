@@ -102,13 +102,12 @@ class Intent:
                 resp["dialogAction"]["fulfillmentState"] = "Fulfilled"
             else:
                 resp["dialogAction"]["fulfillmentState"] = "Failed"
-
-        if resp_type == self.RESP_SLOT:
+        elif resp_type == self.RESP_SLOT:
             resp["dialogAction"]["slotToElicit"] = slot
             resp["dialogAction"]["intentName"] = self.intent
             resp["dialogAction"]["slots"] = self.slots
             self.set_session_value("current_slot",slot)
-        if resp_type == self.RESP_CONFIRM:
+        elif resp_type == self.RESP_CONFIRM:
             resp["dialogAction"]["intentName"] = self.intent
             resp["dialogAction"]["slots"] = self.slots
             self.set_session_value("current_slot",slot)

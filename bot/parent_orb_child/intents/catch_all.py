@@ -72,7 +72,8 @@ class Intent(BaseIntent):
 
                 return self.build_template(
                     case="action_default",
-                    resp_type=self.RESP_CONFIRM if self.session_value("need_excuse") else self.RESP_CLOSE,
+                    resp_type=self.RESP_SLOT if self.session_value("need_excuse") else self.RESP_CLOSE,
+                    slot="more_info" if self.session_value("need_excuse") else None,
                     text=self.action.reminder.resp_negative(is_final),
                 )
 
