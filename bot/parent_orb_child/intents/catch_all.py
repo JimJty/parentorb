@@ -67,6 +67,8 @@ class Intent(BaseIntent):
                 is_final = self.action.minutes_until() <= 5
                 if is_final:
                     self.set_session_value("need_excuse", True)
+                else:
+                    self.action.handle_child_resp(False, False)
 
                 return self.build_template(
                     case="action_default",
