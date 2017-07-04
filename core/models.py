@@ -251,7 +251,7 @@ class Child(models.Model):
 
     def get_active_reminder(self):
 
-        actions = Action.objects.filter(reminder__child=self, status=500).order_by('event_time')
+        actions = Action.objects.filter(reminder__child=self, status__in=(300,500)).order_by('event_time')
 
         if actions.count() > 0:
             return actions[0]
@@ -313,15 +313,20 @@ class Reminder(models.Model):
 
     def resp_affirmative(self):
 
-        default = "Great, I'll let PARENT_NAME know."
+        default = "Great, I'll let PARENT_NAME know you are ready for %s know." % self.for_desc
 
         return default
 
-    def resp_negative(self):
+    def resp_negative(self, final=False, excuse=False):
 
-        default = "Ok, I'll check back later"
+        msg = "Ok, I'll check back later"
 
-        return default
+        if excuse:
+            msg = "Ok, I'll let PARENT_NAME know."
+        elif final:
+            msg = "What do you want me to tell PARENT_NAME?"
+
+        return msg
 
 
 class Action(models.Model):
@@ -331,9 +336,9 @@ class Action(models.Model):
 
     STATUS_CHOICES = (
         (100, 'Scheduled 1st Request'),
-        (200, 'Sent 1st Request'),
+        #(200, 'Sent 1st Request'),
         (300, 'Scheduled 2nd Request'),
-        (400, 'Sent 2nd Request'),
+        #(400, 'Sent 2nd Request'),
         (500, 'Awaiting Response'),
         (600, 'Incomplete'),
         (700, 'Complete'),
@@ -344,7 +349,7 @@ class Action(models.Model):
     event_time = models.DateTimeField(blank=False, null=False)
 
     request_count = models.IntegerField(default=0, blank=False, null=False)
-
+    excuse = models.CharField(max_length=200, blank=True, null=True)
 
     add_date = models.DateTimeField(blank=False, auto_now_add=True)
     edit_date = models.DateTimeField(blank=False, auto_now=True)
@@ -380,14 +385,19 @@ class Action(models.Model):
 
         return msg
 
-    def handle_child_resp(self, affirmative):
+    def handle_child_resp(self, affirmative, final=False):
 
         if affirmative:
             self.status = 700
             self.save()
         else:
-            self.status = 300
-            self.save()
+            if not final:
+                self.status = 300
+                self.save()
+            else:
+                self.status = 600
+                self.excuse = final
+                self.save()
 
 
     def process(self):

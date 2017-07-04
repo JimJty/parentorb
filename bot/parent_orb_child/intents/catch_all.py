@@ -53,7 +53,7 @@ class Intent(BaseIntent):
 
             resp = self.input.strip().lower()
 
-            if resp == "yes":
+            if resp == "yes" and not self.session_value("need_excuse"):
                 self.action.handle_child_resp(True)
 
                 return self.build_template(
@@ -62,13 +62,30 @@ class Intent(BaseIntent):
                     text=self.action.reminder.resp_affirmative(),
                 )
 
-            elif resp == "no":
+            elif resp == "no" and not self.session_value("need_excuse"):
 
-                self.action.handle_child_resp(False)
+                is_final = self.action.minutes_until() <= 5
+                if is_final:
+                    self.set_session_value("need_excuse", True)
+
                 return self.build_template(
                     case="action_default",
                     resp_type=self.RESP_CLOSE,
-                    text=self.action.reminder.resp_negative(),
+                    text=self.action.reminder.resp_negative(is_final),
+                )
+
+            elif self.session_value("need_excuse") and not self.session_value("excuse"):
+
+                excuse = self.input.strip()[:200]
+                self.action.handle_child_resp(False, excuse)
+
+                self.set_session_value("need_excuse", False)
+                self.set_session_value("excuse", None)
+
+                return self.build_template(
+                    case="action_default",
+                    resp_type=self.RESP_CLOSE,
+                    text=self.action.reminder.resp_negative(True, True),
                 )
 
             else:
