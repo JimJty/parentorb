@@ -13,6 +13,7 @@ import logging
 
 from django.views.decorators.csrf import csrf_exempt
 from twilio.request_validator import RequestValidator
+from twilio.rest import Client
 
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
@@ -73,7 +74,13 @@ def handle_twilio(request):
             inputText=msg
         )
 
-        print resp
+        resp_message = resp.get("message", None)
+        if resp_message:
+            smd_client = Client(settings.TWILIO_ACCOUNT, settings.TWILIO_KEY)
+            sms = smd_client.messages.create(
+                to=request.POST.get('From', None),
+                from_=settings.TWILIO_FROM_NUMBER,
+                body=resp_message)
 
 
     results = {'status':1 if not msg else 0,"msg":msg,}
