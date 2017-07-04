@@ -42,14 +42,14 @@ class Intent(BaseIntent):
             if upcoming or past:
                 if upcoming:
                     msg = "Upcoming:"
-                    for u in upcoming:
+                    for u in upcoming[:3]:
                         msg += "\n * %s" % u
                 else:
                     msg += "Upcoming:\n * Nothing Yet"
 
                 if past:
                     msg += "\nRecent:"
-                    for p in past:
+                    for p in past[:3]:
                         msg += "\n * %s" % p
 
 

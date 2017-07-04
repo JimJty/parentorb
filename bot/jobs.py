@@ -6,11 +6,25 @@ import logging
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
+def process_all_actions():
+    actions = Action.get_actions_to_process()
+    logger.info("found %s actions to process" % actions.count())
+
+    for a in actions:
+        run(process_action, (a.id,))
 
 
 def process_action(action_id):
 
-    print "processing: %s" % Action.process_by_id(action_id)
+    try:
+        action = Action.objects.get(id=action_id)
+    except ObjectDoesNotExist:
+        logger.error("action_id not found: %s", action_id)
+        return
+
+    logger.info("processing: %s", action.id)
+    action.process()
+
 
 def schedule_all_users():
 

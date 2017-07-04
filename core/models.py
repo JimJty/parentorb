@@ -287,7 +287,7 @@ class Child(models.Model):
 
         reminders_present = []
 
-        actions = Action.objects.filter(reminder__child=self, event_time__lte=future_date, status__in=(600,700)).order_by('add_date')
+        actions = Action.objects.filter(reminder__child=self, event_time__lte=future_date, status__in=(600,700)).order_by('-add_date')
         for a in actions:
             if a.reminder_id not in reminders_present:
                 past.append(a.child_display())
@@ -414,6 +414,8 @@ class Action(models.Model):
         else:
             if not final:
                 self.status = 300
+                before_event_time = self.event_time - timedelta(minutes=5)
+                self.scheduled_time= before_event_time
                 self.save()
             else:
                 self.status = 600
@@ -453,17 +455,6 @@ class Action(models.Model):
             self.save()
 
     @staticmethod
-    def process_by_id(action_id):
-
-        action = Action.objects.get(id=action_id)
-        action.process()
-
-
-    def handle_response(self):
-
-        pass
-
-    @staticmethod
     def gen_slug(user_id, reminder_id, schedule_time):
 
         slug = "s_%s_%s_%s" % (
@@ -495,7 +486,14 @@ class Action(models.Model):
 
         return action
 
-#helper funcitons
+    @staticmethod
+    def get_actions_to_process():
+
+        actions = Action.objects.filter(status__in=(100,300), scheduled_time__lte=timezone.now()).order_by('id')
+
+        return actions
+
+#helper functions
 
 def get_ordinal(day):
 

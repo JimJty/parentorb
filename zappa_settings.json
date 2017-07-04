@@ -45,10 +45,16 @@
       ]
     }
     ,
-    "events": [{
+    "events": [
+      {
         "function": "bot.jobs.schedule_all_users",
         "expression": "cron(0 20 * * ? *)" // every day 18:00 utc
-    }]
+      },
+      {
+        "function": "bot.jobs.process_all_actions",
+        "expression": "rate(1 minute)" // every minute
+      }
+    ]
   }
 }
 
