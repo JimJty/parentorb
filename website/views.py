@@ -67,7 +67,7 @@ def handle_twilio(request):
         print msg_request, settings.CHILD_BOT_NAME, settings.CHILD_BOT_ALIAS, user_id, session
         resp = lex_client.post_text(
             botName=settings.CHILD_BOT_NAME,
-            #botAlias=settings.CHILD_BOT_ALIAS,
+            botAlias="latest",
             userId=user_id,
             sessionAttributes=session,
             inputText=msg_request
@@ -81,7 +81,7 @@ def handle_twilio(request):
         if resp_message and resp_state == "ElicitIntent" and not resp_session:
             resp = lex_client.post_text(
                 botName=settings.CHILD_BOT_NAME,
-                #botAlias=settings.CHILD_BOT_ALIAS,
+                botAlias="latest",
                 userId=user_id,
                 sessionAttributes=session,
                 inputText="hello"
