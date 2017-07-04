@@ -45,8 +45,6 @@ def handle_twilio(request):
 
     else:
 
-        print request.POST
-
         lex_client = boto3.client('lex-runtime')
 
         user_id = request.POST.get('From', None)
@@ -55,9 +53,9 @@ def handle_twilio(request):
 
         user_id = user_id.replace("+","")
 
-        msg = request.POST.get('Body', None)
-        if not msg:
-            msg = "hello"
+        msg_request = request.POST.get('Body', None)
+        if not msg_request:
+            msg_request = "hello"
 
         photo_url = request.POST.get('MediaUrl0',None)
         session = {}
@@ -71,7 +69,7 @@ def handle_twilio(request):
             botAlias=settings.CHILD_BOT_ALIAS,
             userId=user_id,
             sessionAttributes=session,
-            inputText=msg
+            inputText=msg_request
         )
 
         resp_message = resp.get("message", None)
