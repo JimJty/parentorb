@@ -40,10 +40,16 @@ class Intent(BaseIntent):
             #     resp_type=self.RESP_CLOSE,
             #     text="Here's what you have coming up:",
             # )
+            # return self.build_template(
+            #     case="no_action_default",
+            #     text="Send picture",
+            #     resp_type="ElicitIntent",
+            # )
             return self.build_template(
-                case="no_action_default",
+                case="no_slot_child",
+                resp_type=self.RESP_SLOT,
+                slot="photo",
                 text="Send picture",
-                resp_type="ElicitIntent",
             )
 
 
