@@ -56,15 +56,20 @@ def handle_twilio(request):
 
         msg = request.POST.get('Body', None)
         if not msg:
-            raise Exception("missing_msg")
+            msg = "hello"
+
+        photo_url = request.POST.get('MediaUrl0',None)
+        session = None
+        if photo_url:
+            session = {
+                "photo_url": photo_url,
+            }
 
         resp = lex_client.post_text(
             botName=settings.CHILD_BOT_NAME,
             botAlias=settings.CHILD_BOT_ALIAS,
             userId=user_id,
-            # sessionAttributes={
-            #     'string': 'string'
-            # },
+            sessionAttributes=session,
             inputText=msg
         )
 
