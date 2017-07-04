@@ -35,10 +35,15 @@ class Intent(BaseIntent):
 
         #no_action_default
         if not self.action:
+            # return self.build_template(
+            #     case="no_action_default",
+            #     resp_type=self.RESP_CLOSE,
+            #     text="Here's what you have coming up:",
+            # )
             return self.build_template(
                 case="no_action_default",
-                resp_type=self.RESP_CLOSE,
-                text="Here's what you have coming up:",
+                text="Send picture",
+                resp_type="ElicitIntent",
             )
 
 
