@@ -225,6 +225,11 @@ class AppUser(models.Model):
                 for d in relevant_days:
                    Action.schedule_for_user(self.id, r.id, r.schedule_time(d), d)
 
+    @staticmethod
+    def get_users_to_schedule():
+
+        users = AppUser.objects.filter(children__reminders__one_time=None).order_by('id')
+        return users
 
 
 class Child(models.Model):
@@ -476,6 +481,7 @@ class Action(models.Model):
 
         try:
             action = Action.objects.get(slug=slug)
+            return action
         except ObjectDoesNotExist:
             action = Action()
 
@@ -486,6 +492,8 @@ class Action(models.Model):
         action.event_time = event_time
 
         action.save()
+
+        return action
 
 #helper funcitons
 
