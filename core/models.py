@@ -266,13 +266,29 @@ class Child(models.Model):
 
         reminders_present = []
 
-        actions = Action.objects.filter(reminder__child=self, add_date__lte=future_date).order_by('add_date')
+        actions = Action.objects.filter(reminder__child=self, event_time=future_date, status__in=(100,300,500)).order_by('add_date')
         for a in actions:
             if a.reminder_id not in reminders_present:
                 upcoming.append(a.child_display())
                 reminders_present.append(a.reminder_id)
 
         return upcoming
+
+    def get_recent_past(self):
+
+        past = []
+
+        future_date = timezone.now() + timedelta(days=1)
+
+        reminders_present = []
+
+        actions = Action.objects.filter(reminder__child=self, event_time=future_date, status__in=(600,700)).order_by('add_date')
+        for a in actions:
+            if a.reminder_id not in reminders_present:
+                past.append(a.child_display())
+                reminders_present.append(a.reminder_id)
+
+        return past
 
 
 class Reminder(models.Model):
