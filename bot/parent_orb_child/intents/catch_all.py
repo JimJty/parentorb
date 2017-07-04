@@ -48,5 +48,34 @@ class Intent(BaseIntent):
                 text=msg,
             )
 
+        #action_default
+        if self.action:
+
+            resp = self.input.strip().lower()
+
+            if resp == "yes":
+                self.action.handle_child_resp(True)
+
+                return self.build_template(
+                    case="action_default",
+                    resp_type=self.RESP_CLOSE,
+                    text=self.action.reminder.resp_affirmative(),
+                )
+
+            elif resp == "no":
+
+                self.action.handle_child_resp(False)
+                return self.build_template(
+                    case="action_default",
+                    resp_type=self.RESP_CLOSE,
+                    text=self.action.reminder.resp_negative(),
+                )
+
+            else:
+                return self.build_template(
+                    case="action_default",
+                    resp_type=self.RESP_CLOSE,
+                    text=self.action.reminder.resp_no_understand(),
+                )
 
 

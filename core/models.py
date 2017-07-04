@@ -305,6 +305,25 @@ class Reminder(models.Model):
 
         return event_time - timedelta(minutes=self.DEFAULT_SCHEDULE_MINUTES)
 
+    def resp_no_understand(self):
+
+        default = "I don't understand, are you ready, yes or no?"
+
+        return default
+
+    def resp_affirmative(self):
+
+        default = "Great, I'll let PARENT_NAME know."
+
+        return default
+
+    def resp_negative(self):
+
+        default = "Ok, I'll check back later"
+
+        return default
+
+
 class Action(models.Model):
 
     slug = models.CharField(max_length=100, blank=False, null=False, unique=True)
@@ -360,6 +379,16 @@ class Action(models.Model):
         )
 
         return msg
+
+    def handle_child_resp(self, affirmative):
+
+        if affirmative:
+            self.status = 700
+            self.save()
+        else:
+            self.status = 300
+            self.save()
+
 
     def process(self):
 
