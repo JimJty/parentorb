@@ -44,11 +44,11 @@
         "sg-267daf57"
       ]
     }
-//    ,
-//    "events": [{
-//        "function": "bot.jobs.process_action", // The function to execute
-//        "expression": "rate(1 minute)" // When to execute it (in cron or rate format)
-//    }]
+    ,
+    "events": [{
+        "function": "bot.jobs.schedule_all_users",
+        "expression": "cron(0 20 * * ? *)" // every day 18:00 utc
+    }]
   }
 }
 
