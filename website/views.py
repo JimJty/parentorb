@@ -72,6 +72,7 @@ def handle_twilio(request):
             inputText=msg_request
         )
 
+        print resp
         resp_message = resp.get("message", None)
         if resp_message:
             smd_client = Client(settings.TWILIO_ACCOUNT, settings.TWILIO_KEY)
