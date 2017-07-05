@@ -119,7 +119,7 @@ class Intent(BaseIntent):
         elif not self.session_value("event"):
             self.set_session_value("event", self.slot_value('event'))
 
-        self.set_slot_value("event", self.session_value("event"))
+        self.set_slot_value("event", self.session_value("event")) #hack for bad event capture
 
         #no_schedule_type
         if not self.slot_value('schedule_type'):
