@@ -328,13 +328,13 @@ class Reminder(models.Model):
 
     def resp_no_understand(self):
 
-        default = "I don't understand, are you ready, yes or no?"
+        default = "I don't understand, are you ready for %s, yes or no?" % self.for_desc
 
         return default
 
     def resp_affirmative(self):
 
-        default = "Great, I'll let PARENT_NAME know you are ready for %s know." % self.for_desc
+        default = "Great, I'll let PARENT_NAME know you are ready for %s." % self.for_desc
 
         return default
 
@@ -371,6 +371,7 @@ class Action(models.Model):
 
     request_count = models.IntegerField(default=0, blank=False, null=False)
     excuse = models.CharField(max_length=200, blank=True, null=True)
+    was_parent_notified = models.BooleanField(default=False, null=False, blank=False)
 
     add_date = models.DateTimeField(blank=False, auto_now_add=True)
     edit_date = models.DateTimeField(blank=False, auto_now=True)
@@ -413,6 +414,7 @@ class Action(models.Model):
         if affirmative:
             self.status = 700
             self.save()
+            self.notify_parent()
         else:
             if not final:
                 self.status = 300
@@ -423,18 +425,66 @@ class Action(models.Model):
                 self.status = 600
                 self.excuse = final
                 self.save()
+                self.notify_parent()
+
+    def notify_parent(self):
+
+        if not self.was_parent_notified:
+
+            msg = None
+            if self.status == 700:
+                if self.reminder.kind == 100:
+                    msg = "%s is ready for %s at %s" % (
+                        self.reminder.child.first_name,
+                        self.reminder.for_desc,
+                        time_part(self.reminder.child.user.local_time(self.event_time)),
+                    )
+
+            elif self.status == 600:
+
+                if self.reminder.kind == 100:
+
+                    msg = "%s is NOT ready for %s at %s" % (
+                            self.reminder.child.first_name,
+                            self.reminder.for_desc,
+                            time_part(self.reminder.child.user.local_time(self.event_time)),
+                        )
+
+                    if self.excuse == "no_response":
+                        msg += " They did not responsd to my attempts to contact them."
+                    elif self.excuse:
+                        msg += " Their reason: '%s'." % self.excuse
+
+            if msg:
+                try:
+                    m = Messenger(settings.FB_MESSENGER_TOKEN)
+                    m.send_message(self.reminder.child.user.ref_id, msg)
+                except FacebookException, inst:
+                    logger.error("error sending fb msg: %s", inst)
+
+                self.was_parent_notified = True
+                self.save()
+
+
+
 
     def is_last_chance(self):
 
         return self.minutes_until() <= self.LAST_CHANCE_MINUTES
+
+    def is_past_due(self):
+
+        return self.minutes_until() <= 0
 
     def process(self):
 
         sms_client = Client(settings.TWILIO_ACCOUNT, settings.TWILIO_KEY)
         msg = None
 
-        #retry if no response
-        if self.status == 500 and self.request_count == 1 and self.is_last_chance():
+        #handle no response
+        if self.status == 500 and self.is_past_due():
+            self.handle_child_resp(False, "no_response")
+        elif self.status == 500 and self.request_count == 1 and self.is_last_chance():
             self.handle_child_resp(False, False)
 
 

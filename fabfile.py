@@ -87,6 +87,12 @@ def fb_get_profile():
     m = Messenger(django_settings.FB_MESSENGER_TOKEN)
     print json.dumps(m.get_profile("1402413149874881"))
 
+@task
+def fb_send_message():
+
+    #testing
+    m = Messenger(django_settings.FB_MESSENGER_TOKEN)
+    print json.dumps(m.send_message("1402413149874881", "Testing FB api.", "https://en.wikipedia.org/static/images/project-logos/enwiki.png"))
 
 @task
 def deploy_bot():
