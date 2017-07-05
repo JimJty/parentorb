@@ -1,5 +1,5 @@
 from bot.base_intent import Intent as BaseIntent
-from core.models import Child, AppUser
+from core.models import Child, AppUser, Action
 
 
 class Intent(BaseIntent):
@@ -78,7 +78,7 @@ class Intent(BaseIntent):
 
             elif resp == "no" and not self.slot_value("more_info"):
 
-                is_final = self.action.minutes_until() <= 5
+                is_final = self.action.is_last_chance()
                 if not is_final:
                     self.action.handle_child_resp(False, False)
 

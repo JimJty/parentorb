@@ -375,6 +375,8 @@ class Action(models.Model):
     add_date = models.DateTimeField(blank=False, auto_now_add=True)
     edit_date = models.DateTimeField(blank=False, auto_now=True)
 
+    LAST_CHANCE_MINUTES = 5
+
     def minutes_until(self):
 
         minutes, seconds = divmod((self.event_time - timezone.now()).total_seconds(), 60)
@@ -422,11 +424,19 @@ class Action(models.Model):
                 self.excuse = final
                 self.save()
 
+    def is_last_chance(self):
+
+        return self.minutes_until() <= self.LAST_CHANCE_MINUTES
 
     def process(self):
 
         sms_client = Client(settings.TWILIO_ACCOUNT, settings.TWILIO_KEY)
         msg = None
+
+        #retry if no response
+        if self.status == 500 and self.request_count == 1 and self.is_last_chance():
+            self.handle_child_resp(False, False)
+
 
         if self.reminder.kind == 100:
 
@@ -450,7 +460,7 @@ class Action(models.Model):
 
         if msg:
             sms_client.messages.create(to=self.reminder.child.phone_number, from_=settings.TWILIO_FROM_NUMBER, body=msg)
-
+            self.request_count += 1
             self.status = 500
             self.save()
 
@@ -489,7 +499,7 @@ class Action(models.Model):
     @staticmethod
     def get_actions_to_process():
 
-        actions = Action.objects.filter(status__in=(100,300), scheduled_time__lte=timezone.now()).order_by('id')
+        actions = Action.objects.filter(status__in=(100,300,500), scheduled_time__lte=timezone.now()).order_by('id')
 
         return actions
 
