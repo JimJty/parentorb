@@ -86,12 +86,12 @@ def handle_twilio(request):
             #print resp
             resp_message = resp.get("message", None)
 
-        if resp_message:
-            smd_client = Client(settings.TWILIO_ACCOUNT, settings.TWILIO_KEY)
-            sms = smd_client.messages.create(
-                to=request.POST.get('From', None),
-                from_=settings.TWILIO_FROM_NUMBER,
-                body=resp_message)
+        # if resp_message:
+        #     smd_client = Client(settings.TWILIO_ACCOUNT, settings.TWILIO_KEY)
+        #     sms = smd_client.messages.create(
+        #         to=request.POST.get('From', None),
+        #         from_=settings.TWILIO_FROM_NUMBER,
+        #         body=resp_message)
 
     if resp_message:
         resp_message = "<Response><Message>%s</Message></Response>" % resp_message
