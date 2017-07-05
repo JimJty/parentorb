@@ -38,12 +38,9 @@ def handle_twilio(request):
         request.META.get('HTTP_X_TWILIO_SIGNATURE', '')
     )
 
-    msg = None
+    resp_message = None
 
-    if not is_valid:
-        msg = "invalid"
-
-    else:
+    if is_valid:
 
         lex_client = boto3.client('lex-runtime')
 
@@ -96,11 +93,12 @@ def handle_twilio(request):
                 from_=settings.TWILIO_FROM_NUMBER,
                 body=resp_message)
 
+    if resp_message:
+        resp_message = "<Response><Message>%s</Message></Response>" % resp_message
+    else:
+        resp_message = "<Response></Response>"
 
-    results = {'status':1 if not msg else 0,"msg":msg,}
-
-
-    return HttpResponse(json.dumps(results), content_type='application/javascript')
+    return HttpResponse(resp_message, content_type='text/xml')
 
 
 def error_test(request):
