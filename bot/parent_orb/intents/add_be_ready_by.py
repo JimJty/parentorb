@@ -96,7 +96,7 @@ class Intent(BaseIntent):
             msg = "What time do you want %s to be ready?" % self.slot_value('child')
 
             if self.attempt_count('time') > 1:
-                msg = "What time?, be more more specific, like 7:30am."
+                msg = "What time?, be sure to add am or pm."
 
             return self.build_template(
                 case="no_slot_time",
@@ -106,7 +106,7 @@ class Intent(BaseIntent):
             )
 
         #no_event
-        if not self.slot_value('event'):
+        if not self.slot_value('event') and not self.session_value('event'):
 
             msg = "What does %s need to be ready for?" % self.slot_value('child')
 
@@ -116,6 +116,10 @@ class Intent(BaseIntent):
                 slot="event",
                 text=msg,
             )
+        elif not self.session_value("event"):
+            self.set_session_value("event", self.slot_value('event'))
+
+        self.set_slot_value("event", self.session_value("event"))
 
         #no_schedule_type
         if not self.slot_value('schedule_type'):
