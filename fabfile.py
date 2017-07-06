@@ -154,9 +154,11 @@ def send_sms(number):
 
     #testing twilio
 
+    msg = "Hello!"
+
     client = Client(django_settings.TWILIO_ACCOUNT, django_settings.TWILIO_KEY)
 
-    message = client.messages.create(to=number, from_=django_settings.TWILIO_FROM_NUMBER, body="Hello!")
+    message = client.messages.create(to=number, from_=django_settings.TWILIO_FROM_NUMBER, body=msg)
 
     print message
 

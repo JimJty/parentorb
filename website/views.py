@@ -30,8 +30,8 @@ def home(request):
 def handle_twilio(request):
 
     #uncomment out for testing
-    resp_message = "<Response></Response>"
-    return HttpResponse(resp_message, content_type='text/xml')
+    #resp_message = "<Response></Response>"
+    #return HttpResponse(resp_message, content_type='text/xml')
 
     #validate
     validator = RequestValidator(settings.TWILIO_KEY)
@@ -90,12 +90,6 @@ def handle_twilio(request):
             #print resp
             resp_message = resp.get("message", None)
 
-        # if resp_message:
-        #     smd_client = Client(settings.TWILIO_ACCOUNT, settings.TWILIO_KEY)
-        #     sms = smd_client.messages.create(
-        #         to=request.POST.get('From', None),
-        #         from_=settings.TWILIO_FROM_NUMBER,
-        #         body=resp_message)
 
     if resp_message:
         resp_message = "<Response><Message>%s</Message></Response>" % resp_message
