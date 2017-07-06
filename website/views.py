@@ -29,6 +29,10 @@ def home(request):
 @csrf_exempt
 def handle_twilio(request):
 
+    #uncomment out for testing
+    resp_message = "<Response></Response>"
+    return HttpResponse(resp_message, content_type='text/xml')
+
     #validate
     validator = RequestValidator(settings.TWILIO_KEY)
 
