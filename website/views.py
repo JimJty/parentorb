@@ -24,7 +24,7 @@ def home(request):
 
     }
 
-    return render(request, 'front/home.html', context)
+    return render(request, 'website/home.html', context)
 
 @csrf_exempt
 def handle_twilio(request):
