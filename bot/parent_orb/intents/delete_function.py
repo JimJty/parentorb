@@ -77,54 +77,44 @@ class Intent(BaseIntent):
 
             else:
 
-                if self.session_value("child_list"):
+                child_id = self.extract_object_id("child_list")
+                selected_child = self.user.get_child_by_id(child_id)
+                if not selected_child:
+                    return self.build_template(
+                        case="delete_child",
+                        resp_type=self.RESP_CLOSE,
+                        text="Child not found.",
+                    )
 
-                    child_list = self.session_value("child_list").split('|')
-                    print child_list
-                    print int(self.slot_value('object_id'))
 
+                if self.confirmation is None:
 
-                    try:
-                        selected_child = child_list[int(self.slot_value('object_id')) - 1]
-                        selected_child = self.user.get_child_by_id(selected_child)
-                    except:
-                        selected_child = None
+                    return self.build_template(
+                        case="delete_child",
+                        resp_type=self.RESP_CONFIRM,
+                        text="Are you sure you want to delete %s's account?" % selected_child.first_name,
+                        menu_title="Confirm:",
+                        menu_buttons=[
+                            MenuButton("Yes", "yes"),
+                            MenuButton("No", "no"),
+                        ]
+                    )
+                elif self.confirmation is True:
 
-                    if not selected_child:
-                        return self.build_template(
-                            case="delete_child",
-                            resp_type=self.RESP_CLOSE,
-                            text="Child not found.",
-                        )
+                    selected_child.delete()
 
-                    if self.confirmation is None:
+                    return self.build_template(
+                        case="delete_child",
+                        resp_type=self.RESP_CLOSE,
+                        text="Poof, child account deleted.",
+                    )
+                else:
 
-                        return self.build_template(
-                            case="delete_child",
-                            resp_type=self.RESP_CONFIRM,
-                            text="Are you sure you want to delete %s's account?" % selected_child.first_name,
-                            menu_title="Confirm:",
-                            menu_buttons=[
-                                MenuButton("Yes", "yes"),
-                                MenuButton("No", "no"),
-                            ]
-                        )
-                    elif self.confirmation is True:
-
-                        selected_child.delete()
-
-                        return self.build_template(
-                            case="delete_child",
-                            resp_type=self.RESP_CLOSE,
-                            text="Poof, child account deleted.",
-                        )
-                    else:
-
-                        return self.build_template(
-                            case="delete_child",
-                            resp_type=self.RESP_CLOSE,
-                            text="Nothing was deleted.",
-                        )
+                    return self.build_template(
+                        case="delete_child",
+                        resp_type=self.RESP_CLOSE,
+                        text="Nothing was deleted.",
+                    )
 
 
 

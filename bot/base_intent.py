@@ -84,6 +84,24 @@ class Intent:
 
         return "record_id|%s" % value
 
+    def extract_object_id(self, object_list_key):
+
+        object_list = self.session_value(object_list_key)
+
+        if not object_list:
+            return None
+
+        object_list = object_list.split('|')
+
+        try:
+            object_id = int(self.slot_value('object_id')) - 1
+            if object_id >= 0:
+                return object_list[object_id]
+            else:
+                return None
+        except:
+            return None
+
     def increment_attempt(self, slot):
         key_name="attempt_%s" % slot
         current_count = int(self.session_value(key_name) or '0')
