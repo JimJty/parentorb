@@ -39,6 +39,14 @@ class Intent:
         self.last_case = self.session_value('last_case')
         self.current_slot = self.session_value('current_slot')
 
+        if self.confirmation == "Confirmed":
+            self.confirmation = True
+        elif self.confirmation == "Denied":
+            self.confirmation = False
+        else:
+            self.confirmation = None
+
+
         self.user = None
         if self.user_id:
             self.user = self.get_user()

@@ -12,11 +12,28 @@ class Intent(BaseIntent):
 
         # delete_account
         if self.slot_value('object') == 'account':
-            return self.build_template(
-                case="delete_account",
-                resp_type=self.RESP_CONFIRM,
-                text="Whoa, DELETE your account?",
-            )
+
+            if self.confirmation is None:
+
+                return self.build_template(
+                    case="delete_account",
+                    resp_type=self.RESP_CONFIRM,
+                    text="Whoa, DELETE your account?",
+                )
+            elif self.confirmation is True:
+
+                return self.build_template(
+                    case="delete_account",
+                    resp_type=self.RESP_CLOSE,
+                    text="Poof, account deleted.",
+                )
+            else:
+
+                return self.build_template(
+                    case="delete_account",
+                    resp_type=self.RESP_CLOSE,
+                    text="Your account was not deleted.",
+                )
 
 
         # default
