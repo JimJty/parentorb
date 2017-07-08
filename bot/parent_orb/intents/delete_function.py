@@ -65,7 +65,7 @@ class Intent(BaseIntent):
                     self.set_session_value('child_list', child_list)
 
                     for c in children:
-                        msg+= "\n %s) %s" % (counter, c.first_name)
+                        msg+= "\n\n #%s. %s" % (counter, c.first_name)
                         counter += 1
 
                     return self.build_template(
@@ -139,7 +139,7 @@ class Intent(BaseIntent):
                     self.set_session_value('reminder_list', reminder_list)
 
                     for r in reminders:
-                        msg+= "\n %s) %s" % (counter, r.display())
+                        msg+= "\n\n #%s. %s" % (counter, r.display())
                         counter += 1
 
                     return self.build_template(
