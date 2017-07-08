@@ -129,7 +129,7 @@ class Intent(BaseIntent):
                     return self.build_template(
                         case="delete_reminder",
                         resp_type=self.RESP_CLOSE,
-                        text="You have no reminders",
+                        text="You have no active reminders.",
                     )
                 else:
 
