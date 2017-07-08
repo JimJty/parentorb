@@ -102,6 +102,7 @@ class Intent(BaseIntent):
                 elif self.confirmation is True:
 
                     selected_child.delete()
+                    self.set_session_value('child_list', None)
 
                     return self.build_template(
                         case="delete_child",
@@ -110,15 +111,87 @@ class Intent(BaseIntent):
                     )
                 else:
 
+                    self.set_session_value('child_list', None)
+
                     return self.build_template(
                         case="delete_child",
                         resp_type=self.RESP_CLOSE,
                         text="Nothing was deleted.",
                     )
 
+        # delete_reminder
+        if obj_selected == 'reminder':
+
+            if not self.slot_value('object_id'):
+
+                reminders = self.user.get_reminders()
+                if reminders.count() == 0:
+                    return self.build_template(
+                        case="delete_reminder",
+                        resp_type=self.RESP_CLOSE,
+                        text="You have no reminders",
+                    )
+                else:
+
+                    msg = "Which number:"
+                    counter = 1
+                    reminder_list = "|".join([str(r.id) for r in reminders])
+                    self.set_session_value('reminder_list', reminder_list)
+
+                    for r in reminders:
+                        msg+= "\n %s) %s" % (counter, r.display())
+                        counter += 1
+
+                    return self.build_template(
+                        case="delete_reminder",
+                        resp_type=self.RESP_SLOT,
+                        slot="object_id",
+                        text=msg,
+                    )
+
+            else:
+
+                reminder_id = self.extract_object_id("reminder_list")
+                selected_reminder = self.user.get_reminder_by_id(reminder_id)
+                if not reminder_id:
+                    return self.build_template(
+                        case="delete_reminder",
+                        resp_type=self.RESP_CLOSE,
+                        text="Reminder not found.",
+                    )
 
 
+                if self.confirmation is None:
 
+                    return self.build_template(
+                        case="delete_reminder",
+                        resp_type=self.RESP_CONFIRM,
+                        text="Are you sure you want to delete #%s?" % self.slot_value('object_id'),
+                        menu_title="Confirm:",
+                        menu_buttons=[
+                            MenuButton("Yes", "yes"),
+                            MenuButton("No", "no"),
+                        ]
+                    )
+                elif self.confirmation is True:
+
+                    selected_reminder.delete()
+                    self.set_session_value('reminder_list', None)
+
+                    return self.build_template(
+                        case="delete_reminder",
+                        resp_type=self.RESP_CLOSE,
+                        text="Poof, reminder deleted.",
+                    )
+                else:
+
+                    self.set_session_value('reminder_list', None)
+
+                    return self.build_template(
+                        case="delete_reminder",
+                        resp_type=self.RESP_CLOSE,
+                        text="Nothing was deleted.",
+                    )
 
         # default
         return self.build_template(

@@ -112,7 +112,7 @@ class AppUser(models.Model):
 
     def get_reminders(self):
 
-        reminders = Reminder.objects.filter(child__user=self)
+        reminders = Reminder.objects.filter(child__user=self).order_by('id')
 
         return reminders
 
@@ -169,6 +169,14 @@ class AppUser(models.Model):
 
         return None
 
+    def get_reminder_by_id(self, reminder_id):
+
+        reminder = Reminder.objects.filter(child__user=self, id=reminder_id)
+        if reminder.count() == 1:
+            return reminder[0]
+
+        return None
+
     def add_reminder(self, child_id, kind, for_desc, is_repeated, choosen_date, reminder_time, days_selected):
 
         self.get_child_by_id(child_id)
@@ -194,6 +202,8 @@ class AppUser(models.Model):
 
             reminder.save()
             self.schedule_actions()
+
+        return reminder
 
     def schedule_actions(self):
 
@@ -349,6 +359,67 @@ class Reminder(models.Model):
 
         return msg
 
+    def display(self):
+
+        to_display = "%s for %s at %s" % (
+            self.for_desc,
+            self.child.first_name,
+            self.display_time()
+        )
+
+        return to_display
+
+    def display_time(self):
+
+        if self.one_time:
+
+            display_time = self.child.user.local_time(self.one_time)
+            local_time_now = self.child.user.local_time()
+            local_time_tomorrow = local_time_now + timedelta(days=1)
+
+            if local_time_now.strftime("%Y-%m-%d") ==  display_time.strftime("%Y-%m-%d"):
+                date_part = "Today"
+            elif local_time_tomorrow.strftime("%Y-%m-%d") ==  display_time.strftime("%Y-%m-%d"):
+                date_part = "Tomorrow"
+            else:
+                date_part = "on %s %s" % (display_time.strftime("%b"), get_ordinal(display_time.strftime("%d")))
+
+            display_time = "%s %s" % (
+                time_part(display_time),
+                date_part
+            )
+
+        else:
+            display_time = timezone.now().strftime("%Y-%m-%d") + "T" + self.repeat_at_time
+            display_time = datetime.strptime(display_time, "%Y-%m-%dT%H:%M")
+
+            display_time = "%s on %s" % (
+                time_part(display_time),
+                ', '.join(self.display_repeat_times())
+            )
+
+        return display_time
+
+    def display_repeat_times(self):
+
+        selected_days = []
+        for d in sorted(self.repeat_days.split('|')):
+            if d == "0":
+                selected_days.append("Mon")
+            elif d == "1":
+                selected_days.append("Tue")
+            elif d == "2":
+                selected_days.append("Wed")
+            elif d == "3":
+                selected_days.append("Thur")
+            elif d == "4":
+                selected_days.append("Fri")
+            elif d == "5":
+                selected_days.append("Sat")
+            elif d == "6":
+                selected_days.append("Sun")
+
+        return selected_days
 
 class Action(models.Model):
 
