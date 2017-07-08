@@ -79,8 +79,9 @@ class Intent(BaseIntent):
 
                 if self.session_value("child_list"):
 
+                    child_list = self.session_value("child_list").split('|')
                     try:
-                        selected_child = self.session_value("child_list")[int(self.slot_value('object_id'))]
+                        selected_child = child_list[int(self.slot_value('object_id'))]
                         selected_child = self.user.get_child_by_id(selected_child)
                     except:
                         selected_child = None
