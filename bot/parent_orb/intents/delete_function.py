@@ -65,7 +65,7 @@ class Intent(BaseIntent):
                     self.set_session_value('child_list', child_list)
 
                     for c in children:
-                        msg+= "\n\n #%s. %s" % (counter, c.first_name)
+                        msg+= "\n\n#%s. %s" % (counter, c.first_name)
                         counter += 1
 
                     return self.build_template(
@@ -124,7 +124,7 @@ class Intent(BaseIntent):
 
             if not self.slot_value('object_id'):
 
-                reminders = self.user.get_reminders()
+                reminders = self.user.get_reminders(True)
                 if reminders.count() == 0:
                     return self.build_template(
                         case="delete_reminder",
@@ -139,7 +139,7 @@ class Intent(BaseIntent):
                     self.set_session_value('reminder_list', reminder_list)
 
                     for r in reminders:
-                        msg+= "\n\n #%s. %s" % (counter, r.display())
+                        msg+= "\n\n#%s. %s" % (counter, r.display())
                         counter += 1
 
                     return self.build_template(

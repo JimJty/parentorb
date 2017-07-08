@@ -9,6 +9,7 @@ from dateutil.tz import tzoffset, tzutc
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models, IntegrityError, transaction
+from django.db.models import Q
 from django.utils import timezone
 from django_pgjsonb import JSONField
 import logging
@@ -110,9 +111,14 @@ class AppUser(models.Model):
 
         return children
 
-    def get_reminders(self):
+    def get_reminders(self, active_only=False):
 
-        reminders = Reminder.objects.filter(child__user=self).order_by('id')
+        if not active_only:
+            reminders = Reminder.objects.filter(child__user=self).order_by('id')
+        else:
+            reminders = Reminder.objects.filter(child__user=self).filter(
+                (Q(one_time__gte=timezone.now()) | Q(one_time__isnull=True))
+            ).order_by('id')
 
         return reminders
 
