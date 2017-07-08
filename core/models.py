@@ -118,7 +118,7 @@ class AppUser(models.Model):
         else:
             reminders = Reminder.objects.filter(
                 Q(child__user=self),
-                (Q(one_time__gte=timezone.now()) | Q(one_time__isnull=True))
+                Q(one_time__gte=timezone.now()) | Q(one_time__isnull=True)
             ).order_by('id')
 
         return reminders
