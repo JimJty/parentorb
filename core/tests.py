@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 from django.test import TestCase
 from django.utils import timezone
@@ -136,6 +136,7 @@ class TestActions(TestCase):
             days_selected = '0|1|2|5'
         )
 
+        reminder = Reminder.objects.get(id = reminder.id)
         print reminder.display()
 
         return
