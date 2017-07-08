@@ -116,7 +116,7 @@ class TestActions(TestCase):
 
         child = user.add_child("Jill", "555")
 
-        user.add_reminder(
+        reminder1= user.add_reminder(
             child_id = child.id,
             kind = 100,
             for_desc = 'brand practice',
@@ -126,7 +126,7 @@ class TestActions(TestCase):
             days_selected = None
         )
 
-        user.add_reminder(
+        reminder = user.add_reminder(
             child_id = child.id,
             kind = 100,
             for_desc = 'brand practice',
@@ -135,6 +135,10 @@ class TestActions(TestCase):
             reminder_time = "16:30",
             days_selected = '0|1|2|5'
         )
+
+        print reminder.display()
+
+        return
 
         user.schedule_actions()
 

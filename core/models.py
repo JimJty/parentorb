@@ -390,7 +390,7 @@ class Reminder(models.Model):
             )
 
         else:
-            display_time = timezone.now().strftime("%Y-%m-%d") + "T" + self.repeat_at_time
+            display_time = timezone.now().strftime("%Y-%m-%d") + "T" + str(self.repeat_at_time)
             display_time = datetime.strptime(display_time, "%Y-%m-%dT%H:%M")
 
             display_time = "%s on %s" % (
