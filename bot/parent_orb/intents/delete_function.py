@@ -61,7 +61,7 @@ class Intent(BaseIntent):
 
                     msg = "Which number:"
                     counter = 1
-                    child_list = [c.id for c in children]
+                    child_list = [str(c.id) for c in children]
                     self.set_session_value('child_list', child_list)
 
                     for c in children:
