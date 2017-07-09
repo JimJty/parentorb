@@ -16,7 +16,7 @@ class Intent(BaseIntent):
         if upcoming:
             msg = "Upcoming:"
             for u in upcoming[:3]:
-                msg += "\n\n * %s" % u
+                msg += "\n * %s" % u
         else:
             msg += "Upcoming:\n\n * Nothing Yet"
 

@@ -103,7 +103,7 @@ class AppUser(models.Model):
         actions = Action.objects.filter(reminder__child__user=self, event_time__lte=future_date, status__in=(100,300,500)).order_by('event_time')
         for a in actions:
             if a.reminder_id not in reminders_present:
-                upcoming.append(a.child_display())
+                upcoming.append(a.display())
                 reminders_present.append(a.reminder_id)
 
         return upcoming
@@ -119,7 +119,7 @@ class AppUser(models.Model):
         actions = Action.objects.filter(reminder__child__user=self, event_time__lte=future_date, status__in=(600,700)).order_by('-event_time')
         for a in actions:
             if a.reminder_id not in reminders_present:
-                past.append(a.child_display())
+                past.append(a.display())
                 reminders_present.append(a.reminder_id)
 
         return past
@@ -354,7 +354,7 @@ class Child(models.Model):
         actions = Action.objects.filter(reminder__child=self, event_time__lte=future_date, status__in=(100,300,500)).order_by('event_time')
         for a in actions:
             if a.reminder_id not in reminders_present:
-                upcoming.append(a.child_display())
+                upcoming.append(a.display_child())
                 reminders_present.append(a.reminder_id)
 
         return upcoming
@@ -370,7 +370,7 @@ class Child(models.Model):
         actions = Action.objects.filter(reminder__child=self, event_time__lte=future_date, status__in=(600,700)).order_by('-event_time')
         for a in actions:
             if a.reminder_id not in reminders_present:
-                past.append(a.child_display())
+                past.append(a.display_child())
                 reminders_present.append(a.reminder_id)
 
         return past
@@ -537,7 +537,7 @@ class Action(models.Model):
 
         return int(minutes) + 1
 
-    def child_display(self):
+    def display_child(self, include_name=False):
 
 
         local_time_now = self.reminder.child.user.local_time()
@@ -551,13 +551,25 @@ class Action(models.Model):
         else:
             date_part = "on %s %s" % (local_time_event.strftime("%b"), get_ordinal(local_time_event.strftime("%d")))
 
-        msg = "%s at %s %s" % (
-            self.reminder.for_desc,
-            time_part(local_time_event),
-            date_part,
-        )
+        if not include_name:
+            msg = "%s at %s %s" % (
+                self.reminder.for_desc,
+                time_part(local_time_event),
+                date_part,
+            )
+        else:
+            msg = "%s: %s at %s %s" % (
+                self.reminder.child.first_name,
+                self.reminder.for_desc,
+                time_part(local_time_event),
+                date_part,
+            )
 
         return msg
+
+    def display(self):
+
+        return self.display_child(True)
 
     def handle_child_resp(self, affirmative, final=False):
 
@@ -599,7 +611,7 @@ class Action(models.Model):
                             self.reminder.for_desc,
                         )
                     elif self.excuse:
-                        msg = "%s said she is NOT ready for %s. The reason: '%s'." % (
+                        msg = "%s said she is NOT ready for %s. The reason: %s" % (
                             self.reminder.child.first_name,
                             self.reminder.for_desc,
                             self.excuse
