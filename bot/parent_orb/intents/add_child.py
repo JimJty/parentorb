@@ -127,6 +127,8 @@ class Intent(BaseIntent):
                 validation_code = self.session_value("validation_code")
                 hashed_code =  hashlib.md5()
                 hashed_code.update("%s%s" % (code, settings.SECRET_KEY ))
+
+                print "in", validation_code, hashed_code.hexdigest()
                 if validation_code == hashed_code.hexdigest():
 
                     #add the child to the user
