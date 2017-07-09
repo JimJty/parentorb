@@ -105,6 +105,15 @@ class AppUser(models.Model):
 
         return child
 
+    def get_child_by_phone(self, phone_number):
+
+        child = Child.get_by_phone(phone_number)
+        if child and child.user == self:
+            return child
+        else:
+            return None
+
+
     def get_children(self):
 
         children = self.children.all().order_by('first_name','id')

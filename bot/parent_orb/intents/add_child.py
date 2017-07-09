@@ -76,26 +76,36 @@ class Intent(BaseIntent):
                 try:
                     resp = client.lookups.phone_numbers(phone_number).fetch()
 
-                    self.set_session_value("validated_phone","1")
-                    self.set_slot_value("phone_number", resp.phone_number)
+                    existing_child = self.user.get_child_by_phone(resp.phone_number)
 
-                    validation_code = ''.join(random.SystemRandom().choice(['1','2','3','4','5','6','7','8','9']) for _ in range(5))
+                    if existing_child:
+                        return self.build_template(
+                            case="no_code",
+                            resp_type=self.RESP_CLOSE,
+                            text="This number has already been added for %s" % existing_child.first_name,
+                        )
 
-                    hashed_code =  hashlib.md5()
-                    hashed_code.update("%s%s" % (validation_code, settings.SECRET_KEY ))
-                    self.set_session_value("validation_code", hashed_code.hexdigest())
+                    else:
+                        self.set_session_value("validated_phone","1")
+                        self.set_slot_value("phone_number", resp.phone_number)
 
-                    msg_body = "Hello, your parent is using ParentOrb. Please send them this code: %s" % validation_code
+                        validation_code = ''.join(random.SystemRandom().choice(['1','2','3','4','5','6','7','8','9']) for _ in range(5))
 
-                    try:
-                        client.messages.create(to=phone_number, from_=settings.TWILIO_FROM_NUMBER, body=msg_body)
-                    except Exception, inst:
-                        raise Exception("sms_send_error:%s" % inst)
+                        hashed_code =  hashlib.md5()
+                        hashed_code.update("%s%s" % (validation_code, settings.SECRET_KEY ))
+                        self.set_session_value("validation_code", hashed_code.hexdigest())
 
-                    return self.build_template(
-                        case="no_code",
-                        resp_type=self.RESP_DELEGATE,
-                    )
+                        msg_body = "Hello, your parent is using ParentOrb. Please send them this code: %s" % validation_code
+
+                        try:
+                            client.messages.create(to=phone_number, from_=settings.TWILIO_FROM_NUMBER, body=msg_body)
+                        except Exception, inst:
+                            raise Exception("sms_send_error:%s" % inst)
+
+                        return self.build_template(
+                            case="no_code",
+                            resp_type=self.RESP_DELEGATE,
+                        )
 
 
                 except TwilioRestException:
