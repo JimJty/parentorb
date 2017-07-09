@@ -241,7 +241,7 @@ class AppUser(models.Model):
 
     def add_reminder(self, child_id, kind, for_desc, is_repeated, choosen_date, reminder_time, days_selected):
 
-        self.get_child_by_id(child_id)
+        child = self.get_child_by_id(child_id)
 
         if not is_repeated:
             one_time =  self.relevant_server_time(reminder_time, choosen_date)
@@ -252,7 +252,7 @@ class AppUser(models.Model):
             days_selected = '|'.join(sorted(days_selected.split('|'))) #reorder
 
         reminder = Reminder()
-        reminder.child_id = child_id
+        reminder.child = child
         reminder.kind = kind
         reminder.for_desc = for_desc
         reminder.one_time = one_time
@@ -264,6 +264,13 @@ class AppUser(models.Model):
 
             reminder.save()
             self.schedule_actions()
+
+            msg = "%s added a reminder for you: %s" % (
+                self.nick_name,
+                reminder.display_child(),
+            )
+            sms_client = Client(settings.TWILIO_ACCOUNT, settings.TWILIO_KEY)
+            sms_client.messages.create(to=child.phone_number, from_=settings.TWILIO_FROM_NUMBER, body=msg)
 
         return reminder
 
@@ -406,7 +413,7 @@ class Reminder(models.Model):
 
     def resp_affirmative(self):
 
-        default = "Great, I'll let PARENT_NAME know you are ready for %s." % self.for_desc
+        default = "Great, I'll let %s know you are ready for %s." % (self.child.user.nick_name, self.for_desc,)
 
         return default
 
@@ -415,9 +422,9 @@ class Reminder(models.Model):
         msg = "Ok, I'll check back later"
 
         if excuse:
-            msg = "Ok, I'll let PARENT_NAME know."
+            msg = "Ok, I'll let %s know." % self.child.user.nick_name
         elif final:
-            msg = "What do you want me to tell PARENT_NAME?"
+            msg = "What do you want me to tell %s?" % self.child.user.nick_name
 
         return msg
 
@@ -426,6 +433,15 @@ class Reminder(models.Model):
         to_display = "%s for %s at %s" % (
             self.for_desc,
             self.child.first_name,
+            self.display_time()
+        )
+
+        return to_display
+
+    def display_child(self):
+
+        to_display = "%s at %s" % (
+            self.for_desc,
             self.display_time()
         )
 
@@ -624,8 +640,9 @@ class Action(models.Model):
         if self.reminder.kind == 100:
 
             if self.status == 100:
-                msg = "Hello %s, PARENT_NAME wants you to be ready for %s in %s minutes (%s). Are you ready?" % (
+                msg = "Hello %s, %s wants you to be ready for %s in %s minutes (%s). Are you ready?" % (
                     self.reminder.child.first_name,
+                    self.reminder.child.user.nick_name,
                     self.reminder.for_desc,
                     self.minutes_until(),
                     time_part(self.reminder.child.user.local_time(self.event_time))
