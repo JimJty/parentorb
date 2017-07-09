@@ -351,7 +351,7 @@ class Child(models.Model):
 
         reminders_present = []
 
-        actions = Action.objects.filter(reminder__child=self, event_time__lte=future_date, status__in=(100,300,500)).order_by('add_date')
+        actions = Action.objects.filter(reminder__child=self, event_time__lte=future_date, status__in=(100,300,500)).order_by('event_time')
         for a in actions:
             if a.reminder_id not in reminders_present:
                 upcoming.append(a.child_display())
@@ -367,7 +367,7 @@ class Child(models.Model):
 
         reminders_present = []
 
-        actions = Action.objects.filter(reminder__child=self, event_time__lte=future_date, status__in=(600,700)).order_by('-add_date')
+        actions = Action.objects.filter(reminder__child=self, event_time__lte=future_date, status__in=(600,700)).order_by('-event_time')
         for a in actions:
             if a.reminder_id not in reminders_present:
                 past.append(a.child_display())
