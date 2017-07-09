@@ -11,18 +11,35 @@ class Intent(BaseIntent):
 
         obj_selected = self.slot_value('object').lower() if self.slot_value('object') else None
 
+        #list_reminders
+        if obj_selected in ("reminder","reminders"):
+
+            reminders = self.user.get_reminders(True)
+
+            msg = "Reminders:"
+            counter = 1
+
+            for r in reminders:
+                msg+= "\n\n#%s. %s" % (counter, r.display())
+                counter += 1
+
+            return self.build_template(
+                case="list_reminders",
+                resp_type=self.RESP_CLOSE,
+                text=msg,
+            )
 
 
         # default
         return self.build_template(
             case="default",
-                resp_type=self.RESP_CLOSE,
-                text="What do you want list?",
-                menu_title="You can:",
-                menu_buttons=[
-                    MenuButton("List Reminders", "list reminders"),
-                    MenuButton("List Children", "list children"),
-                ]
+            resp_type=self.RESP_CLOSE,
+            text="What do you want list?",
+            menu_title="You can:",
+            menu_buttons=[
+                MenuButton("List Reminders", "list reminders"),
+                MenuButton("List Children", "list children"),
+            ]
         )
 
 
