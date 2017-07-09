@@ -132,6 +132,7 @@ class AppUser(models.Model):
         child = Child.get_by_phone(phone_number)
         if child:
             child.first_name = first_name
+            child.user = self
             child.save()
             return child
 
