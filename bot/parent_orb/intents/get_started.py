@@ -22,7 +22,7 @@ class Intent(BaseIntent):
                 text="Welcome, I am ParentOrb and I can automate repetitive reminders with your child, like being ready at a certain time, chores, and curfews.",
                 menu_title="Let's get you setup.",
                 menu_buttons=[
-                    MenuButton("Setup", "setup account"),
+                    MenuButton("Setup Account", "setup account"),
                 ]
             )
 

@@ -30,14 +30,6 @@ class Intent(BaseIntent):
                                 {
                                     "text": "Be Ready By",
                                     "value": "add be ready by"
-                                },
-                                {
-                                    "text": "Chore",
-                                    "value": "add chore"
-                                },
-                                {
-                                    "text": "Curfew",
-                                    "value": "add curfew"
                                 }
                             ]
                         }

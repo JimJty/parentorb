@@ -92,6 +92,38 @@ class AppUser(models.Model):
         self.nick_name = nick_name
         self.save()
 
+    def get_upcoming(self):
+
+        upcoming = []
+
+        future_date = timezone.now() + timedelta(days=8)
+
+        reminders_present = []
+
+        actions = Action.objects.filter(reminder__child__user=self, event_time__lte=future_date, status__in=(100,300,500)).order_by('event_time')
+        for a in actions:
+            if a.reminder_id not in reminders_present:
+                upcoming.append(a.child_display())
+                reminders_present.append(a.reminder_id)
+
+        return upcoming
+
+    def get_recent_past(self):
+
+        past = []
+
+        future_date = timezone.now() + timedelta(days=1)
+
+        reminders_present = []
+
+        actions = Action.objects.filter(reminder__child__user=self, event_time__lte=future_date, status__in=(600,700)).order_by('-event_time')
+        for a in actions:
+            if a.reminder_id not in reminders_present:
+                past.append(a.child_display())
+                reminders_present.append(a.reminder_id)
+
+        return past
+
     def add_child(self, first_name, phone_number):
 
         if not first_name:
