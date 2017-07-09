@@ -26,6 +26,13 @@ def home(request):
 
     return render(request, 'website/home.html', context)
 
+def privacy(request):
+    context = {
+
+    }
+
+    return render(request, 'website/privacy.html', context)
+
 @csrf_exempt
 def handle_twilio(request):
 

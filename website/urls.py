@@ -1,10 +1,12 @@
 from django.conf.urls import  url
 
-from website.views import home, error_test, handle_twilio
+from website.views import home, error_test, handle_twilio, privacy
 
 urlpatterns = [
 
     url(r'^$', home, name='home'),
+
+    url(r'^privacy/$', privacy, name='privacy'),
 
     url(r'^handle-twilio/$', handle_twilio, name="hanlde-twilio"),
 
