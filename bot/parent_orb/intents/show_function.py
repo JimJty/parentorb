@@ -19,9 +19,12 @@ class Intent(BaseIntent):
             msg = "Reminders:"
             counter = 1
 
-            for r in reminders:
-                msg+= "\n\n#%s. %s" % (counter, r.display())
-                counter += 1
+            if reminders:
+                for r in reminders:
+                    msg+= "\n\n#%s. %s" % (counter, r.display())
+                    counter += 1
+            else:
+                msg+= "\n\n Nothing Yet"
 
             return self.build_template(
                 case="list_reminders",
@@ -38,9 +41,12 @@ class Intent(BaseIntent):
             msg = "Children:"
             counter = 1
 
-            for c in children:
-                msg+= "\n\n#%s. %s" % (counter, c.first_name)
-                counter += 1
+            if children:
+                for c in children:
+                    msg+= "\n\n#%s. %s" % (counter, c.first_name)
+                    counter += 1
+            else:
+                msg+= "\n\n None Yet"
 
             return self.build_template(
                 case="list_children",

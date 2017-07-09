@@ -1,6 +1,7 @@
 import json
 import os
 
+from datetime import datetime
 from fabric.api import *
 from os.path import dirname
 from twilio.rest import Client
@@ -114,6 +115,8 @@ def deploy_bot():
         run('source ../env2/bin/activate && python manage.py migrate --settings parentorb.settings_prod')
 
         run('source ../env2/bin/activate && zappa update devbot')
+
+    print datetime.now()
 
 
 @task
