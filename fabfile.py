@@ -47,13 +47,28 @@ def fb_set_menu():
             "payload": "Update Me",
         },
         {
-            "title": "Settings",
+            "title": "Add Reminder",
+            "type": "postback",
+            "payload": "add reminder",
+        },
+        {
+            "title": "More...",
             "type": "nested",
             "call_to_actions": [
                 {
-                    "title": "Children",
+                    "title": "Add Child",
                     "type": "postback",
-                    "payload": "Show Children"
+                    "payload": "add child"
+                },
+                {
+                    "title": "List",
+                    "type": "postback",
+                    "payload": "list"
+                },
+                {
+                    "title": "Delete",
+                    "type": "postback",
+                    "payload": "delete"
                 },
             ]
         },
