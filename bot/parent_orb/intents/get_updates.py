@@ -29,7 +29,6 @@ class Intent(BaseIntent):
             case="updates",
             resp_type=self.RESP_CLOSE,
             text=msg,
-            fulfilled=True
         )
 
 
