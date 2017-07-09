@@ -265,6 +265,7 @@ class AppUser(models.Model):
             reminder.save()
             self.schedule_actions()
 
+            reminder.refresh_from_db()
             msg = "%s added a reminder for you: %s" % (
                 self.nick_name,
                 reminder.display_child(),
