@@ -34,6 +34,24 @@ def privacy(request):
     return render(request, 'website/privacy.html', context)
 
 @csrf_exempt
+def contact(request):
+
+    name = request.POST.get('name',None)
+    email = request.POST.get('email',None)
+    message = request.POST.get('message',None)
+
+    if message:
+        msg = "Name: %s" % name
+        msg += "\n\nEmail: %s" % email
+        msg += "\n\nMsg: %s" % message
+
+        email = EmailMessage("ContactForm", msg, settings.SERVER_EMAIL, (settings.SERVER_EMAIL,))
+        email.send()
+
+
+    return HttpResponse("", content_type='text/xml')
+
+@csrf_exempt
 def handle_twilio(request):
 
     #uncomment out for testing
