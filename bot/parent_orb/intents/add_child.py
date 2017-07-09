@@ -123,6 +123,8 @@ class Intent(BaseIntent):
             self.set_session_value("validation_attempts", int(self.session_value('validation_attempts') or 0) + 1)
             code = self.slot_value('code')
 
+            print "in2", has_validated_code
+
             if not has_validated_code:
                 validation_code = self.session_value("validation_code")
                 hashed_code =  hashlib.md5()
