@@ -29,6 +29,7 @@ class AppUser(models.Model):
     email = models.CharField(max_length=200, blank=True, null=True, db_index=True)
     first_name = models.CharField(max_length=200, blank=True, null=True)
     last_name = models.CharField(max_length=200, blank=True, null=True)
+    nick_name = models.CharField(max_length=200, blank=True, null=True)
     time_offset = models.IntegerField(default=None, blank=True, null=True)
 
     custom_data = JSONField(null=False, blank=False, default=json_default, db_index=True)
@@ -78,6 +79,18 @@ class AppUser(models.Model):
             return AppUser.objects.get(ref_id=ref_id)
 
         return user
+
+    def is_configured(self):
+
+        if self.nick_name:
+            return True
+        else:
+            return False
+
+    def configure(self, nick_name):
+
+        self.nick_name = nick_name
+        self.save()
 
     def add_child(self, first_name, phone_number):
 
