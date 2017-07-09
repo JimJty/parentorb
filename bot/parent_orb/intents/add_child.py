@@ -82,7 +82,7 @@ class Intent(BaseIntent):
                         return self.build_template(
                             case="no_code",
                             resp_type=self.RESP_CLOSE,
-                            text="This number has already been added for %s" % existing_child.first_name,
+                            text="This number already belongs to %s" % existing_child.first_name,
                         )
 
                     else:
