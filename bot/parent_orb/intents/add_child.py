@@ -119,18 +119,15 @@ class Intent(BaseIntent):
         #has_code
         elif self.slot_value('code'):
 
-            has_validated_code= self.session_value("has_validated_code") or "0" == "1"
+            has_validated_code = self.session_value("has_validated_code") == "1"
             self.set_session_value("validation_attempts", int(self.session_value('validation_attempts') or 0) + 1)
             code = self.slot_value('code')
-
-            print "in2", has_validated_code
 
             if not has_validated_code:
                 validation_code = self.session_value("validation_code")
                 hashed_code =  hashlib.md5()
                 hashed_code.update("%s%s" % (code, settings.SECRET_KEY ))
 
-                print "in", validation_code, hashed_code.hexdigest()
                 if validation_code == hashed_code.hexdigest():
 
                     #add the child to the user
