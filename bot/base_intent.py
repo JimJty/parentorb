@@ -11,6 +11,7 @@ class Intent:
     RESP_INTENT = "ElicitIntent"
     RESP_CLOSE = "Close"
     RESP_CONFIRM = "ConfirmIntent"
+    RESP_DELEGATE = "Delegate"
 
     DAY_MON = "0"
 
@@ -135,6 +136,9 @@ class Intent:
             self.set_session_value("current_slot",slot)
         elif resp_type == self.RESP_CONFIRM:
             resp["dialogAction"]["intentName"] = self.intent
+            resp["dialogAction"]["slots"] = self.slots
+            self.set_session_value("current_slot",slot)
+        elif resp_type == self.RESP_DELEGATE:
             resp["dialogAction"]["slots"] = self.slots
             self.set_session_value("current_slot",slot)
         else:

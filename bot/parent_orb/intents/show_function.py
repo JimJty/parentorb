@@ -27,6 +27,7 @@ class Intent(BaseIntent):
                 case="list_reminders",
                 resp_type=self.RESP_CLOSE,
                 text=msg,
+                fulfilled=True,
             )
 
         #list_children
@@ -45,6 +46,7 @@ class Intent(BaseIntent):
                 case="list_children",
                 resp_type=self.RESP_CLOSE,
                 text=msg,
+                fulfilled=True,
             )
 
 
