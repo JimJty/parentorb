@@ -596,7 +596,7 @@ class Action(models.Model):
             msg = None
             if self.status == 700:
                 if self.reminder.kind == 100:
-                    msg = "%s told me that she is ready for %s." % (
+                    msg = "%s told me that they are ready for %s." % (
                         self.reminder.child.first_name,
                         self.reminder.for_desc,
                     )
@@ -606,12 +606,12 @@ class Action(models.Model):
                 if self.reminder.kind == 100:
 
                     if self.excuse == "no_response":
-                        msg = "%s does not appear ready for %s. She did not respond to my attempts to contact." % (
+                        msg = "%s does not appear ready for %s. There was no response to my attempts to contact." % (
                             self.reminder.child.first_name,
                             self.reminder.for_desc,
                         )
                     elif self.excuse:
-                        msg = "%s said she is NOT ready for %s. The reason: %s" % (
+                        msg = "%s said they are NOT ready for %s. The reason: %s" % (
                             self.reminder.child.first_name,
                             self.reminder.for_desc,
                             self.excuse
