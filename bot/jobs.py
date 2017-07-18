@@ -29,7 +29,7 @@ def process_action(action_id):
 def schedule_all_users():
 
     users = AppUser.get_users_to_schedule()
-    logger.info("found %s users to schedule" % users.count())
+    logger.info("found %s users to schedule" % len(users))
 
     for u in users:
         run(schedule_user, (u.id,))
