@@ -7,5 +7,5 @@ A smart helper for parents with connected kids.
 - Stack is Python/Django/Postgres on Amazon Lambda
 - Currently parents use a Facebook Messenger to interact with the bot. Kids use text messages.
 - Zappa is used to deploy the bot to AWS/Lambda.
-    - Two separate deployments are used (one for bot, and one foe website) but it is the same code base.
+    - Two separate deployments are used (one for bot, and one for website) but it is the same code base.
 

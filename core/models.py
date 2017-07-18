@@ -308,7 +308,19 @@ class AppUser(models.Model):
     @staticmethod
     def get_users_to_schedule():
 
-        users = AppUser.objects.exclude(children__reminders__repeat_at_time=None).order_by('id')
+        sql = """
+        SELECT
+            distinct u.*
+        FROM
+            core_action a
+            inner join core_reminder r on a.reminder_id = r.id
+            inner join core_child c on r.child_id = c.id
+            inner join core_appuser u on c.user_id = u.id
+        WHERE
+            r.repeat_at_time is not null
+        """
+
+        users = AppUser.objects.raw(sql)
         return users
 
 
