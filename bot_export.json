@@ -1,0 +1,609 @@
+{
+  "name": "ParentOrb",
+  "description": null,
+  "intents": [
+    {
+      "intentName": "AddBeReadyBy",
+      "intentVersion": "9"
+    },
+    {
+      "intentName": "AddChild",
+      "intentVersion": "10"
+    },
+    {
+      "intentName": "DeleteFunction",
+      "intentVersion": "4"
+    },
+    {
+      "intentName": "GetStarted",
+      "intentVersion": "1"
+    },
+    {
+      "intentName": "ShowFunction",
+      "intentVersion": "2"
+    },
+    {
+      "intentName": "AddReminder",
+      "intentVersion": "1"
+    },
+    {
+      "intentName": "Setup",
+      "intentVersion": "1"
+    },
+    {
+      "intentName": "GetUpdates",
+      "intentVersion": "2"
+    }
+  ],
+  "clarificationPrompt": {
+    "messages": [
+      {
+        "contentType": "PlainText",
+        "content": "I'm not sure what you want. Please try again or try 'Update Me'."
+      }
+    ],
+    "maxAttempts": 2,
+    "responseCard": null
+  },
+  "abortStatement": {
+    "messages": [
+      {
+        "contentType": "PlainText",
+        "content": "Sorry, I could not understand."
+      }
+    ],
+    "responseCard": null
+  },
+  "status": "READY",
+  "failureReason": null,
+  "lastUpdatedDate": "2017-07-09T17:10:30.296Z",
+  "createdDate": "2017-06-17T21:13:46.533Z",
+  "idleSessionTTLInSeconds": 300,
+  "voiceId": "Joanna",
+  "checksum": "bc3d5a61-b282-4467-a61e-5fd989c487ab",
+  "version": "$LATEST",
+  "locale": "en-US",
+  "childDirected": false,
+  "dependencies": {
+    "intents": [
+      {
+        "name": "GetStarted",
+        "description": null,
+        "slots": [],
+        "sampleUtterances": [
+          "get started"
+        ],
+        "fulfillmentActivity": {
+          "type": "CodeHook",
+          "codeHook": {
+            "uri": "arn:aws:lambda:us-east-1:763914776679:function:parentorb-devbot",
+            "messageVersion": "1.0"
+          }
+        },
+        "parentIntentSignature": null,
+        "lastUpdatedDate": "2017-06-25T22:15:52.247Z",
+        "createdDate": "2017-06-25T22:15:52.247Z",
+        "version": "1",
+        "checksum": "d4876e81-ec5b-48af-8b51-211b3e2cbef6"
+      },
+      {
+        "name": "DeleteFunction",
+        "description": null,
+        "slots": [
+          {
+            "name": "object_id",
+            "description": null,
+            "slotConstraint": "Optional",
+            "slotType": "AMAZON.NUMBER",
+            "slotTypeVersion": null,
+            "valueElicitationPrompt": {
+              "messages": [
+                {
+                  "contentType": "PlainText",
+                  "content": "Which one?"
+                }
+              ],
+              "maxAttempts": 2,
+              "responseCard": null
+            },
+            "priority": 2,
+            "sampleUtterances": [],
+            "responseCard": null
+          },
+          {
+            "name": "object",
+            "description": null,
+            "slotConstraint": "Required",
+            "slotType": "ObjectTypes",
+            "slotTypeVersion": "2",
+            "valueElicitationPrompt": {
+              "messages": [
+                {
+                  "contentType": "PlainText",
+                  "content": "Delete what?"
+                }
+              ],
+              "maxAttempts": 2,
+              "responseCard": null
+            },
+            "priority": 1,
+            "sampleUtterances": [],
+            "responseCard": null
+          }
+        ],
+        "sampleUtterances": [
+          "delete {object} {object_id}",
+          "delete",
+          "delete {object}"
+        ],
+        "dialogCodeHook": {
+          "uri": "arn:aws:lambda:us-east-1:763914776679:function:parentorb-devbot",
+          "messageVersion": "1.0"
+        },
+        "fulfillmentActivity": {
+          "type": "CodeHook",
+          "codeHook": {
+            "uri": "arn:aws:lambda:us-east-1:763914776679:function:parentorb-devbot",
+            "messageVersion": "1.0"
+          }
+        },
+        "parentIntentSignature": null,
+        "lastUpdatedDate": "2017-07-09T13:19:58.231Z",
+        "createdDate": "2017-07-09T13:19:58.231Z",
+        "version": "4",
+        "checksum": "f708964a-70cd-47d3-9a32-a1525ae8b64f"
+      },
+      {
+        "name": "GetUpdates",
+        "description": null,
+        "slots": [],
+        "sampleUtterances": [
+          "update me",
+          "hello",
+          "status"
+        ],
+        "dialogCodeHook": {
+          "uri": "arn:aws:lambda:us-east-1:763914776679:function:parentorb-devbot",
+          "messageVersion": "1.0"
+        },
+        "fulfillmentActivity": {
+          "type": "CodeHook",
+          "codeHook": {
+            "uri": "arn:aws:lambda:us-east-1:763914776679:function:parentorb-devbot",
+            "messageVersion": "1.0"
+          }
+        },
+        "parentIntentSignature": null,
+        "lastUpdatedDate": "2017-07-09T16:18:43.743Z",
+        "createdDate": "2017-07-09T16:18:43.743Z",
+        "version": "2",
+        "checksum": "1c4905dd-ad37-4099-81cf-2dd68cd37f22"
+      },
+      {
+        "name": "AddReminder",
+        "description": null,
+        "slots": [],
+        "sampleUtterances": [
+          "add reminder"
+        ],
+        "dialogCodeHook": {
+          "uri": "arn:aws:lambda:us-east-1:763914776679:function:parentorb-devbot",
+          "messageVersion": "1.0"
+        },
+        "fulfillmentActivity": {
+          "type": "CodeHook",
+          "codeHook": {
+            "uri": "arn:aws:lambda:us-east-1:763914776679:function:parentorb-devbot",
+            "messageVersion": "1.0"
+          }
+        },
+        "parentIntentSignature": null,
+        "lastUpdatedDate": "2017-06-28T14:40:09.752Z",
+        "createdDate": "2017-06-28T14:40:09.752Z",
+        "version": "1",
+        "checksum": "4216d07d-ced3-445d-a6cc-4d25a84125d4"
+      },
+      {
+        "name": "Setup",
+        "description": null,
+        "slots": [
+          {
+            "name": "nick_name",
+            "description": null,
+            "slotConstraint": "Required",
+            "slotType": "AMAZON.US_FIRST_NAME",
+            "slotTypeVersion": null,
+            "valueElicitationPrompt": {
+              "messages": [
+                {
+                  "contentType": "PlainText",
+                  "content": "Nick name?"
+                }
+              ],
+              "maxAttempts": 2,
+              "responseCard": null
+            },
+            "priority": 1,
+            "sampleUtterances": [],
+            "responseCard": null
+          }
+        ],
+        "sampleUtterances": [
+          "setup account"
+        ],
+        "dialogCodeHook": {
+          "uri": "arn:aws:lambda:us-east-1:763914776679:function:parentorb-devbot",
+          "messageVersion": "1.0"
+        },
+        "fulfillmentActivity": {
+          "type": "CodeHook",
+          "codeHook": {
+            "uri": "arn:aws:lambda:us-east-1:763914776679:function:parentorb-devbot",
+            "messageVersion": "1.0"
+          }
+        },
+        "parentIntentSignature": null,
+        "lastUpdatedDate": "2017-07-09T15:36:10.255Z",
+        "createdDate": "2017-07-09T15:36:10.255Z",
+        "version": "1",
+        "checksum": "b35bd6f8-e942-4a0a-8096-193a85cf9b07"
+      },
+      {
+        "name": "ShowFunction",
+        "description": null,
+        "slots": [
+          {
+            "name": "object",
+            "description": null,
+            "slotConstraint": "Required",
+            "slotType": "ObjectTypes",
+            "slotTypeVersion": "2",
+            "valueElicitationPrompt": {
+              "messages": [
+                {
+                  "contentType": "PlainText",
+                  "content": "Show what?"
+                }
+              ],
+              "maxAttempts": 2,
+              "responseCard": null
+            },
+            "priority": 1,
+            "sampleUtterances": [],
+            "responseCard": null
+          }
+        ],
+        "sampleUtterances": [
+          "show",
+          "show {object}",
+          "list",
+          "list {object}"
+        ],
+        "dialogCodeHook": {
+          "uri": "arn:aws:lambda:us-east-1:763914776679:function:parentorb-devbot",
+          "messageVersion": "1.0"
+        },
+        "fulfillmentActivity": {
+          "type": "CodeHook",
+          "codeHook": {
+            "uri": "arn:aws:lambda:us-east-1:763914776679:function:parentorb-devbot",
+            "messageVersion": "1.0"
+          }
+        },
+        "parentIntentSignature": null,
+        "lastUpdatedDate": "2017-07-09T13:19:09.891Z",
+        "createdDate": "2017-07-09T13:19:09.891Z",
+        "version": "2",
+        "checksum": "bd2b39e8-7b2a-4dfe-b025-cf044f25e7fb"
+      },
+      {
+        "name": "AddBeReadyBy",
+        "description": null,
+        "slots": [
+          {
+            "name": "date",
+            "description": null,
+            "slotConstraint": "Optional",
+            "slotType": "AMAZON.DATE",
+            "slotTypeVersion": null,
+            "valueElicitationPrompt": {
+              "messages": [
+                {
+                  "contentType": "PlainText",
+                  "content": "What day?"
+                }
+              ],
+              "maxAttempts": 2,
+              "responseCard": null
+            },
+            "priority": 5,
+            "sampleUtterances": [],
+            "responseCard": null
+          },
+          {
+            "name": "schedule_type",
+            "description": null,
+            "slotConstraint": "Required",
+            "slotType": "ScheduleTypes",
+            "slotTypeVersion": "2",
+            "valueElicitationPrompt": {
+              "messages": [
+                {
+                  "contentType": "PlainText",
+                  "content": "One Time or Repeat?"
+                }
+              ],
+              "maxAttempts": 2,
+              "responseCard": null
+            },
+            "priority": 4,
+            "sampleUtterances": [],
+            "responseCard": null
+          },
+          {
+            "name": "repeat_day",
+            "description": null,
+            "slotConstraint": "Optional",
+            "slotType": "AMAZON.DayOfWeek",
+            "slotTypeVersion": null,
+            "valueElicitationPrompt": {
+              "messages": [
+                {
+                  "contentType": "PlainText",
+                  "content": "What days?"
+                }
+              ],
+              "maxAttempts": 2,
+              "responseCard": null
+            },
+            "priority": 6,
+            "sampleUtterances": [],
+            "responseCard": null
+          },
+          {
+            "name": "time",
+            "description": null,
+            "slotConstraint": "Required",
+            "slotType": "AMAZON.TIME",
+            "slotTypeVersion": null,
+            "valueElicitationPrompt": {
+              "messages": [
+                {
+                  "contentType": "PlainText",
+                  "content": "What Time?"
+                }
+              ],
+              "maxAttempts": 2,
+              "responseCard": null
+            },
+            "priority": 2,
+            "sampleUtterances": [],
+            "responseCard": null
+          },
+          {
+            "name": "event",
+            "description": null,
+            "slotConstraint": "Required",
+            "slotType": "EventTypes",
+            "slotTypeVersion": "2",
+            "valueElicitationPrompt": {
+              "messages": [
+                {
+                  "contentType": "PlainText",
+                  "content": "For what?"
+                }
+              ],
+              "maxAttempts": 2,
+              "responseCard": null
+            },
+            "priority": 3,
+            "sampleUtterances": [],
+            "responseCard": null
+          },
+          {
+            "name": "child",
+            "description": null,
+            "slotConstraint": "Required",
+            "slotType": "AMAZON.US_FIRST_NAME",
+            "slotTypeVersion": null,
+            "valueElicitationPrompt": {
+              "messages": [
+                {
+                  "contentType": "PlainText",
+                  "content": "For who?"
+                }
+              ],
+              "maxAttempts": 2,
+              "responseCard": null
+            },
+            "priority": 1,
+            "sampleUtterances": [],
+            "responseCard": null
+          }
+        ],
+        "sampleUtterances": [
+          "add be ready by",
+          "be ready by"
+        ],
+        "dialogCodeHook": {
+          "uri": "arn:aws:lambda:us-east-1:763914776679:function:parentorb-devbot",
+          "messageVersion": "1.0"
+        },
+        "fulfillmentActivity": {
+          "type": "CodeHook",
+          "codeHook": {
+            "uri": "arn:aws:lambda:us-east-1:763914776679:function:parentorb-devbot",
+            "messageVersion": "1.0"
+          }
+        },
+        "parentIntentSignature": null,
+        "lastUpdatedDate": "2017-07-09T15:46:15.933Z",
+        "createdDate": "2017-07-09T15:46:15.933Z",
+        "version": "9",
+        "checksum": "b9419941-8948-4739-893b-09070eb56e36"
+      },
+      {
+        "name": "AddChild",
+        "description": null,
+        "slots": [
+          {
+            "name": "code",
+            "description": null,
+            "slotConstraint": "Required",
+            "slotType": "AMAZON.NUMBER",
+            "slotTypeVersion": null,
+            "valueElicitationPrompt": {
+              "messages": [
+                {
+                  "contentType": "PlainText",
+                  "content": "A verification code was sent to that phone number, what is the code (it will expire in 5 minutes)?"
+                }
+              ],
+              "maxAttempts": 2,
+              "responseCard": "{\"version\":1,\"contentType\":\"application/vnd.amazonaws.card.generic\"}"
+            },
+            "priority": 4,
+            "sampleUtterances": [],
+            "responseCard": null
+          },
+          {
+            "name": "phone_number",
+            "description": null,
+            "slotConstraint": "Required",
+            "slotType": "AMAZON.NUMBER",
+            "slotTypeVersion": null,
+            "valueElicitationPrompt": {
+              "messages": [
+                {
+                  "contentType": "PlainText",
+                  "content": "I will send reminders to {child} via text message. What is {child}'s cell phone number?"
+                }
+              ],
+              "maxAttempts": 2,
+              "responseCard": "{\"version\":1,\"contentType\":\"application/vnd.amazonaws.card.generic\"}"
+            },
+            "priority": 3,
+            "sampleUtterances": [],
+            "responseCard": null
+          },
+          {
+            "name": "child",
+            "description": null,
+            "slotConstraint": "Required",
+            "slotType": "AMAZON.US_FIRST_NAME",
+            "slotTypeVersion": null,
+            "valueElicitationPrompt": {
+              "messages": [
+                {
+                  "contentType": "PlainText",
+                  "content": "What is your child's first name?"
+                }
+              ],
+              "maxAttempts": 2,
+              "responseCard": null
+            },
+            "priority": 2,
+            "sampleUtterances": [],
+            "responseCard": null
+          }
+        ],
+        "sampleUtterances": [
+          "add child"
+        ],
+        "dialogCodeHook": {
+          "uri": "arn:aws:lambda:us-east-1:763914776679:function:parentorb-devbot",
+          "messageVersion": "1.0"
+        },
+        "fulfillmentActivity": {
+          "type": "CodeHook",
+          "codeHook": {
+            "uri": "arn:aws:lambda:us-east-1:763914776679:function:parentorb-devbot",
+            "messageVersion": "1.0"
+          }
+        },
+        "parentIntentSignature": null,
+        "lastUpdatedDate": "2017-07-09T17:08:05.110Z",
+        "createdDate": "2017-07-09T17:08:05.110Z",
+        "version": "10",
+        "checksum": "3b45ec32-21d0-4e62-a52c-2fa4e3cb2367"
+      }
+    ],
+    "slotTypes": [
+      {
+        "name": "EventTypes",
+        "description": "A literal holder for events",
+        "enumerationValues": [
+          {
+            "value": "Lorem ipsum dolor"
+          },
+          {
+            "value": "Lorem ipsum"
+          },
+          {
+            "value": "Lorem"
+          },
+          {
+            "value": "1234567890"
+          },
+          {
+            "value": "Lorem ipsum dolor sit amet"
+          },
+          {
+            "value": "Lorem ipsum dolor sit"
+          }
+        ],
+        "lastUpdatedDate": "2017-07-05T13:27:38.016Z",
+        "createdDate": "2017-07-05T13:27:38.016Z",
+        "version": "2",
+        "checksum": null
+      },
+      {
+        "name": "ScheduleTypes",
+        "description": "Schedule Types",
+        "enumerationValues": [
+          {
+            "value": "one time"
+          },
+          {
+            "value": "once"
+          },
+          {
+            "value": "repeat"
+          },
+          {
+            "value": "repeated"
+          }
+        ],
+        "lastUpdatedDate": "2017-06-29T05:13:24.769Z",
+        "createdDate": "2017-06-29T05:13:24.769Z",
+        "version": "2",
+        "checksum": null
+      },
+      {
+        "name": "ObjectTypes",
+        "description": null,
+        "enumerationValues": [
+          {
+            "value": "reminders"
+          },
+          {
+            "value": "reminder"
+          },
+          {
+            "value": "children"
+          },
+          {
+            "value": "account"
+          },
+          {
+            "value": "child"
+          }
+        ],
+        "lastUpdatedDate": "2017-07-09T13:19:03.497Z",
+        "createdDate": "2017-07-09T13:19:03.497Z",
+        "version": "2",
+        "checksum": null
+      }
+    ]
+  }
+}
