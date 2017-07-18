@@ -321,7 +321,9 @@ class AppUser(models.Model):
         """
 
         users = AppUser.objects.raw(sql)
-        return users
+
+        users_list = [u for u in users]
+        return users_list
 
 
 class Child(models.Model):
