@@ -7,7 +7,7 @@ It didn't win, but it was a great opportunity to learn some new technology.
 I'm open sourcing because it's doing some cool things:
  - It's serverless! Not only the chatbot service, but the [django website](https://parentorb.com/), all in the same codebase. 
  - It works with [Facebook Messenger](https://m.me/2022397931327980).
- - A [router](/tree/master/bot/logic.py) and [tester](/tree/master/bot/parent_orb/tests) was made to easily create chat scripts and test them. 
+ - A [router](blob/master/bot/logic.py) and [tester](blob/master/bot/parent_orb/tests) was made to easily create chat scripts and test them. 
 
 ## Overview
 
