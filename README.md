@@ -1,5 +1,5 @@
 # ParentOrb
-A smart helper for parents with connected kids. [Check out the website](http://parentorb.com/).
+A smart helper for parents with connected kids. [Check out the website](https://www.rdatapub.com/parentorb/).
 
 This was a side project I created to submit to the [AWS Chatbot Challange 2017](https://awschatbot2017.devpost.com/).
 
